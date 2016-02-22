@@ -7,18 +7,10 @@ Re-write of linetest.py so people other than me can read it
 This project was/is being written to streamline the update process of the book used
 for the online repository, updated via the KLSadd addendum file which only affects chapters
 9 and 14
-#Edward test commit
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-NOTE! AS OF 2/22/16 THIS FILE IS NOT YET UPDATED TO THE FULL CAPACITY OF THE PREVIOUS FILE. IF FURTHER DEVELOPMENT IS NEEDED, REFER TO THE
+NOTE! AS OF 2/18/16 THIS FILE IS NOT YET UPDATED TO THE FULL CAPACITY OF THE PREVIOUS FILE. IF FURTHER DEVELOPMENT IS NEEDED, REFER TO THE
 linetest.py FILE IF THIS FILE DOES NOT ADDRESS THE NEW/EXTRA GOALS. This means that XCITE PARSE etc HAS NOT BEEN ADDED
-
-Additional goals (already addressed in linetest.py):
--insert correct usepackages
--insert correct commands found in KLSadd.tex to chapter files
--insert editor's initials into sections (ie %RS: begin addition, %RS: end addition)
-
-Additional goals (not already addressed in linetest.py):
--rewrite for "smarter" edits (ex. add new limit relations straight to the limit relations section in the section itself, not at the end)
 
 Current update status: incomplete
 
@@ -35,51 +27,6 @@ Goals:change the book chapter files to include paragraphs from the addendum, and
 chapNums = []
 paras = []
 mathPeople = []
-newCommands = [] #used to hold extra commands that need to be inserted from KLSadd to the chapter files
-#2/18/16 this method addresses the goal of hardcoding in the necessary packages to let the chapter files run as pdf's.
-#Currently only works with chapter 9, ask Dr. Cohl to help port your chapter 14 output file into a pdf
-
-def prepareForPDF(str):
-        footmiscIndex = 0
-        index = 0
-        for word in str:
-                index+=1
-                if("footmisc" in word):
-                        footmiscIndex+= index
-        #edits the chapter string sent to include hyperref, xparse, and cite packages
-        str[footmiscIndex] += "\\usepackage[pdftex]{hyperref} \n\\usepackage {xparse} \n\\usepackage{cite} \n"
-
-        return str
-
-#2/18/16 this method reads in relevant commands that are in KLSadd.tex and returns them as a list and also adds 
-
-def getCommands(kls):
-        for word in kls:
-               index+=1
-               if("smallskipamount" in word):
-                        newCommands.append(index-1)
-               if("mybibitem[1]" in word):
-                        newCommands.append(index)
-
-               #add \large\bf KLSadd: to make KLSadd additions appear like the other paragraphs
-               if("paragraph{" in word):
-                        temp = word[0:word.find("{")+ 1] + "\large\\bf KLSadd: " + word[word.find("{")+ 1: word.find("}")+1]
-               #pretty sure I had to do something here but I forgot, so pass?
-               pass
-
-#2/18/16 this method addresses the goal of hardcoding in the necessary commands to let the chapter files run as pdf's. Currently only works with chapter 9
-
-def insertCommands(kls, str):
-        #reads in the newCommands[] and puts them in str
-        beginIndex = -1 #the index of the "begin document" keyphrase, this is where the new commands need to be inserted.
-
-        #find index of begin document in KLSadd
-        for w in kls:
-                index+=1
-                if("begin{document}" in word):
-                        beginIndex += index
-        str[beginIndex] += newCommands
-        return str
 
 #method to find the indices of the reference paragraphs
 def findReferences(str):
@@ -99,22 +46,16 @@ def findReferences(str):
         return references
 
 #method to change file string(actually a list right now), returns string to be written to file
-#If you write a method that changes something, it is preffered that you call the method in here
-def fixChapter(str, references, p, kls):
-        #str is the file string(actually a list), references is the specific references for the file, and p is the paras variable(not sure if needed) kls is the KLSadd.tex as a list
-        #TODO: OPTIMIZE(?)
+def fixChapter(str, references, p):
+        #str is the file string, references is the specific references for the file, and p is the paras variable(not sure if needed)
+        #TODO: OPTIMIZE
         count = 0 #count is used to represent the values in count
         for i in references:
-                #add the paragraphs before the Reference paragraphs start
+                #add
                 str[i-3] += p[count] 
                 count+=1
+        #I actually don't remember why I had to do this but I think you need it
         str[i-1] += p[count]
-
-        #I actually don't remember why I had to do this but I think you need it ^^^^^^^^^^^^^^^^^^^ 
-        str = prepareForPDF(str)
-        getCommands(kls)
-        str = insertCommands(kls,str)
-        #probably won't work because I don't know how anything works
         return str
 
 #open the KLSadd file to do things with 
@@ -160,18 +101,12 @@ with open("KLSadd.tex", "r") as add:
         #two variables for the references lists one for chapter 9 one for chapter 14
         references9 = findReferences(entire9)
         references14 = findReferences(entire14)
-
         
         #call the fixChapter method to get a list with the addendum paragraphs added in
         str9 = ''.join(fixChapter(entire9, references9, paras))
         str14 = ''.join(fixChapter(entire14, references14, paras))
 
-"""
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If you are writing something that will make a change to the chapter files, write it BEFORE this line, this part is where the lists representing the words/strings in the chapter are joined together and updated as a string!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-"""
-        #write to files  
+        #write to file
         #new output files for safety
         with open("updated9.tex","w") as temp9:
                 temp9.write(str9)
