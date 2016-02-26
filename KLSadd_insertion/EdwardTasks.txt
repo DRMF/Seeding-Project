@@ -1,10 +1,12 @@
-Fix your github;
+Fix your github; hopefully fixed now (fixed if this message shows up on github)
 
 https://help.github.com/categories/ssh/
 go there and try to work out your issue, rm your git directory and try git clone again.
 
 
 If all else fails, try ssh -vT git@github.com
+              ^
+ABOVE IS DONE |
 
 This is what updateChapters.py currently does:
 
