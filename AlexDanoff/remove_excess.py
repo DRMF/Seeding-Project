@@ -4,8 +4,7 @@ import re
 import sys
 
 import parentheses
-from utilities import (writeout, readin, get_line_lengths,
-                       find_line)
+from utilities import (writeout, readin, get_line_lengths, find_line)
 
 EQ_START = r'\begin{equation}'
 EQ_END = r'\end{equation}'
