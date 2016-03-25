@@ -5,6 +5,21 @@ import sys #imported for getting args
 import os #imported for copying file
 def isnumber(char):
 	   return char[0] in "0123456789"
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+def bib_DLMF():
+    wiki.write(
+        "<span class=\"plainlinks\">[HTTP://DLMF.NIST.GOV/" + section + "#" + equation + " Equation (" + equation[1:] + "), Section " + section + "]</span> of [[Bibliography#DLMF|'''DLMF''']].\n\n")
+
+def bib_KLS():
+    wiki.write("<span class=\"plainlinks\">[http://homepage.tudelft.nl/11r49/askey/contents.html Equation in Section "+section+ "]</span> of [[Bibliography#KLS|'''KLS''']].\n\n")#Where should it link to?
+
 def getString(line): #Gets all data within curly braces on a line
 	   #-------Initialization-------
 	   stringWrite=""
@@ -72,7 +87,7 @@ def getEq(line): #Gets all data within constraints,substitutions
 			    per+=1 #watch for % signs
 		      elif count>0 and per==0: #not special character
 			    stringWrite+=c #write the character
-		      
+
 	   return (stringWrite.rstrip().lstrip())
 def getEqP(line,Flag): #Gets all data within proofs
 	   if Flag:
@@ -101,7 +116,7 @@ def getEqP(line,Flag): #Gets all data within proofs
 			   if count>0:
 				    stringWrite+=c
 		      elif c=="$" and per==0:
-			    fEq=not(fEq) 
+			    fEq=not(fEq)
 		    	    if fEq:
 			    	stringWrite+="<math>{\\displaystyle "
 			    else:
@@ -113,10 +128,10 @@ def getEqP(line,Flag): #Gets all data within proofs
                       elif c=="\n" and per==0:
 			    stringWrite=stringWrite.strip()
 			    stringWrite+=c
-			    per+=1 
+			    per+=1
 		      elif count>0 and per==0:
 			    stringWrite+=c
-		      
+
 	   return (stringWrite.lstrip())
 def getSym(line): #Gets all symbols on a line for symbols list
 	   symList=[]
@@ -155,13 +170,13 @@ def getSym(line): #Gets all symbols on a line for symbols list
 					symList.append(symbol)
 					symList+=(getSym(symbol))
 					argFlag=False
-					symbol=""	
-				
+					symbol=""
+
 		elif c=="\\":
-			symFlag=True	
+			symFlag=True
 		elif c=="&" and not (i>line.find("\\begin{array}") and i<line.find("\\end{array}")):
 			 symList.append("&")
-			
+
 	   #if "MeixnerPollaczek{\\lambda}{n}@{x}{\\phi}=\frac{\\pochhammer{2\\lambda}{n}}" in line:
 	   symList.append(symbol)
 	   symList+=getSym(symbol)
@@ -287,7 +302,7 @@ for jsahlfkjsd in range(0,1):
 				elif getString(line)=="EOF":
 					   parse=True
 				elif parse:
-					   #mainPrepend+=("\n<br />\n= "+getString(line)+" =\n")	    
+					   #mainPrepend+=("\n<br />\n= "+getString(line)+" =\n")
 					   stringWrite="\'\'\'"
 					   stringWrite+=getString(line)+"\'\'\'\n"
 					   #labels.append(getString(line))
@@ -319,14 +334,14 @@ for jsahlfkjsd in range(0,1):
 				stringWrite="\'\'\'"
 				stringWrite+=getString(line)+"\'\'\'\n"
 				labels.append("Zeta and Related Functions")
-		  		wiki.write(stringWrite\n) 
+		  		wiki.write(stringWrite\n)
 		  elif "\\part" in line:
 				if getString(line)=="BOF":
 					   parse=False
 				elif getString(line)=="EOF":
 					   parse=True
 				elif parse:
-					   wiki.write("\n<br />\n= "+getString(line)+" =\n")	    
+					   wiki.write("\n<br />\n= "+getString(line)+" =\n")
 					   head=True
 		  '''
 		  if "\\section" in line:
@@ -357,7 +372,7 @@ for jsahlfkjsd in range(0,1):
 			  wiki.write("drmf_eof\n")
 			  sections[secCounter].append(eqCounter)
 			  eqCounter=0
-		  
+
 		  elif "\\subsection" in line and parse:
 			  wiki.write("\n== "+getString(line)+" ==\n")
 			  head=True
@@ -404,7 +419,7 @@ for jsahlfkjsd in range(0,1):
 				eqs.append("")
 				math=True
 		  elif "\\end{equation}" in line:
-                                                                           
+
 				math=False
 		  elif "\\constraint" in line and parse:
 				constraint=True
@@ -424,7 +439,7 @@ for jsahlfkjsd in range(0,1):
 		  elif math and parse:
 			  flagM=True
 			  eqs[len(eqs)-1]+=line
-		          
+
 			  if "\\end{equation}" in lines[i+1] and not "\\subsection" in lines[i+3] and not "\\section" in lines[i+3] and not "\\part" in lines[i+3]:
 			  	u=i
 			  	flagM2=False
@@ -436,7 +451,7 @@ for jsahlfkjsd in range(0,1):
 			  				  flagM=False
 			  				  flagM2=True
 			  	if not(flagM2):
-                          
+
 			  		wiki.write(line.rstrip("\n"))
 					wiki.write("\n}</math><br />\n")
 			  	else:
@@ -492,7 +507,7 @@ for jsahlfkjsd in range(0,1):
 	newSec=False
 	for i in range(0,len(lines)):
 		  line=lines[i]
-		  
+
 		  if "\\section" in line:
 			 secCount+=1
 			 newSec=True
@@ -525,7 +540,7 @@ for jsahlfkjsd in range(0,1):
 						  wiki.write("<div id=\"alignleft\"> << [["+secLabel(sections[secCount][0]).replace(" ","_")+"|"+secLabel(sections[secCount][0])+"]] </div>\n")
 				    else:
 						  wiki.write("<div id=\"alignleft\"> << [["+secLabel(labels[eqCounter-1]).replace(" ","_")+"|"+secLabel(labels[eqCounter-1])+"]] </div>\n")
-				    wiki.write("<div id=\"aligncenter\"> [["+secLabel(sections[secCount+1][0]).replace(" ","_")+"#"+secLabel(labels[eqCounter][len("Formula:"):])+"|formula in "+secLabel(sections[secCount+1][0])+"]] </div>\n") 
+				    wiki.write("<div id=\"aligncenter\"> [["+secLabel(sections[secCount+1][0]).replace(" ","_")+"#"+secLabel(labels[eqCounter][len("Formula:"):])+"|formula in "+secLabel(sections[secCount+1][0])+"]] </div>\n")
 				    #if eqS==sections[secCount][1]:
 				#		  wiki.write("<div id=\"alignright\"> [["+secLabel(sections[(secCount+1)%len(sections)][0]).replace(" ","_")+"|"+secLabel(sections[(secCount+1)%len(sections)][0])+"]] >> </div>\n")
 				    #else:
@@ -573,7 +588,7 @@ for jsahlfkjsd in range(0,1):
 									   cC-=1
 									   if cC==0:
 											 ArgCx+=1
-					   noA=x[:cN] 
+					   noA=x[:cN]
 					   for y in newSym:
 						  cN=0
 						  cC=0
@@ -590,8 +605,8 @@ for jsahlfkjsd in range(0,1):
 									   cC-=1
 									   if cC==0:
 											 ArgC+=1
-									   
-					   
+
+
 						  if y[:cN]==noA: #and ArgC==ArgCx:
 								flagA=False
 								break
@@ -668,8 +683,8 @@ for jsahlfkjsd in range(0,1):
 								checkFlag=True
 								get=True
 								preG=S
-                                                        
-                                                    
+
+
 							 elif checkFlag:
 								get=True
 								checkFlag=False
@@ -679,7 +694,7 @@ for jsahlfkjsd in range(0,1):
 									G=preG
 								get=False
 								checkFlag=False
-                                                                if True: 
+                                                                if True:
 									if symbolPar.find("@")!=-1:
                                                                         	Q=symbolPar[:symbolPar.find("@")]
 									else:
@@ -704,8 +719,8 @@ for jsahlfkjsd in range(0,1):
 									     if websiteU[k:r].find("http://")!=-1:
 											 websites.append(websiteU[k:r+1].strip(" "))
 								             k=r
-								
-								
+
+
 								if websiteU[k:r].find("http://")!=-1:
 									   websites.append(websiteU[k:r+1].strip(" "))
 								websiteF=""
@@ -717,7 +732,7 @@ for jsahlfkjsd in range(0,1):
 								for t in range(5,len(G)):
 									   if G[t]!="":
 											 websiteF=websiteF+" ["+G[t]+" "+G[t]+"]"
-								
+
 								#p1=Q
 								#if Q.find("@")!=-1:
 									   #p1=Q[:Q.find("@")]
@@ -744,7 +759,7 @@ for jsahlfkjsd in range(0,1):
 											 letter=listArgs[num-1]
 											 new1+=letter
 											 pause=False
-											 
+
 									   else:
 											 new1+=p1[k]'''
 								p2=G[1]
@@ -757,7 +772,7 @@ for jsahlfkjsd in range(0,1):
 											 mathF=not mathF
 									   else:
 											 new2+=p2[k]
-								#p1=new1								
+								#p1=new1
 								p2=new2
 								finSym.append(web1+" "+p1+"]</span> : "+p2+" :"+websiteF)
 								break
@@ -778,12 +793,12 @@ for jsahlfkjsd in range(0,1):
 								#wiki.write(" ")
 								#wiki.write(g[g.find("http://"):].strip("\n"))
 								#wiki.write("] ")'''
-								
-								
+
+
 					   #preG=S
 					   if not gFlag:
 							 del newSym[s]
-					   
+
 				gFlag=True
 				#finSym.reverse()
 				if ampFlag:
@@ -798,19 +813,28 @@ for jsahlfkjsd in range(0,1):
 					else:
 						  wiki.write("<br />\n<span class=\"plainlinks\">["+y)
 
-			
+
 				wiki.write("\n<br />\n")
 
 				wiki.write("\n== Bibliography==\n\n")#should there be a space between bibliography and ==?
 				r=unmodLabel(labels[eqCounter])
-				q=r.find("DLMF:")+5
-				p=r.find(":",q)
-				section=r[q:p]
-				equation=r[p+1:]
-				if equation.find(":")!=-1:
-				    equation=equation[0:equation.find(":")]
+				q = r.find("KLS:") + 4
+				p = r.find(":", q)
+				section = r[q:p]
+				equation = r[p + 1:]
 
-				wiki.write("<span class=\"plainlinks\">[HTTP://DLMF.NIST.GOV/"+section+"#"+equation+" Equation ("+equation[1:]+"), Section "+section+"]</span> of [[Bibliography#DLMF|'''DLMF''']].\n\n")
+				if is_number(section == False):
+					q = r.find("DLMF:") + 5
+					p = r.find(":", q)
+					section = r[q:p]
+					equation = r[p + 1:]
+					bib_DLMF()
+					print("Section",section)
+
+				if equation.find(":") != -1:
+					equation = equation[0:equation.find(":")]
+
+				bib_KLS()
 				#wiki.write("<span class=\"plainlinks\">[http://homepage.tudelft.nl/11r49/askey/contents.html Equation in Section "+section+ "]</span> of [[Bibliography#KLS|'''KLS''']].\n\n")#Where should it link to?
 				wiki.write("== URL links ==\n\nWe ask users to provide relevant URL links in this space.\n\n")
 				if eqCounter<endNum:
@@ -820,7 +844,7 @@ for jsahlfkjsd in range(0,1):
 						  wiki.write("<div id=\"alignleft\"> << [["+secLabel(sections[secCount][0]).replace(" ","_")+"|"+secLabel(sections[secCount][0])+"]] </div>\n")
 				    else:
 						  wiki.write("<div id=\"alignleft\"> << [["+secLabel(labels[eqCounter-1]).replace(" ","_")+"|"+secLabel(labels[eqCounter-1])+"]] </div>\n")
-				    wiki.write("<div id=\"aligncenter\"> [["+secLabel(sections[secCount+1][0]).replace(" ","_")+"#"+secLabel(labels[eqCounter][len("Formula:"):])+"|formula in "+secLabel(sections[secCount+1][0])+"]] </div>\n") 
+				    wiki.write("<div id=\"aligncenter\"> [["+secLabel(sections[secCount+1][0]).replace(" ","_")+"#"+secLabel(labels[eqCounter][len("Formula:"):])+"|formula in "+secLabel(sections[secCount+1][0])+"]] </div>\n")
 				    #if eqS==sections[secCount][1]:
 				#		  wiki.write("<div id=\"alignright\"> [["+sections[(secCount+1)%len(sections)][0].replace(" ","_")+"|"+sections[(secCount+1)%len(sections)][0]+"]] >> </div>\n")
 				    #else:
@@ -834,7 +858,7 @@ for jsahlfkjsd in range(0,1):
 				    wiki.write("<div id=\"alignright\"> [["+labels[(0)%endNum].replace(" ","_")+"|"+labels[0%endNum]+"]] </div>\n")
 				    wiki.write("</div>\n\ndrmf_eof\n")
 
-												
+
 
 		  elif "\\constraint" in line and parse:
 				#symbols=symbols+getSym(line)
@@ -844,7 +868,7 @@ for jsahlfkjsd in range(0,1):
                                 hCon=False
 				constraint=True
 				math=False
-				conLine=""				
+				conLine=""
 				#wiki.write("<div align=\"left\">"+getEq(line)+"</div><br />\n")
 		  elif "\\substitution" in line and parse:
 				#symbols=symbols+getSym(line)
@@ -859,7 +883,7 @@ for jsahlfkjsd in range(0,1):
 		  elif "\\drmfname" in line and parse:
 			 math=False
 			 comToWrite="\n== Name ==\n\n<div align=\"left\">"+getString(line)+"</div><br />\n"+comToWrite
-		  
+
 		  elif "\\drmfnote" in line and parse:
 			 symbols=symbols+getSym(line)
 			 if hNote:
@@ -868,7 +892,7 @@ for jsahlfkjsd in range(0,1):
 		         note=True
 		         math=False
 		         noteLine=""
-		
+
 		  elif "\\proof" in line and parse:
 				#symbols=symbols+getSym(line)
                                 symLine=line.strip("\n")
@@ -967,7 +991,7 @@ for jsahlfkjsd in range(0,1):
 					comToWrite=""
 					symbols=symbols+getSym(symLine)
                                         symLine=""
-			
+
 		  elif math:
 			  if "\\end{equation}" in lines[i+1] or "\\constraint" in lines[i+1] or "\\substitution" in lines[i+1] or "\\proof" in lines[i+1] or "\\drmfnote" in lines[i+1] or "\\drmfname" in lines[i+1]:
 			  	wiki.write(line.rstrip("\n"))
