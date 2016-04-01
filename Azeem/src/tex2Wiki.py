@@ -211,12 +211,15 @@ def KLS_main(n):
 	for jsahlfkjsd in range(0,1):
 		try:
 			tex=open(sys.argv[1],'r')
+			#print(tex.read())
 			wiki=open(sys.argv[2],'w')
 			main = open("OrthogonalPolynomials.mmd", "r")
 		except:
 			tex=open("/home/pzw/DRMF-Seeding-Project/data/09outb.tex",'r')
 			wiki=open("09outb.xml",'w')
 			main=open("/home/pzw/DRMF-Seeding-Project/Azeem/src/OrthogonalPolynomials.mmd","r")
+		#x = tex.read()
+		#print(x)
 		mainText=main.read()
 		mainPrepend=""
 		mainWrite=open("OrthogonalPolynomials.mmd.new","w")
@@ -284,8 +287,14 @@ def KLS_main(n):
 					mainText="drmf_bof\n\'\'\'Orthogonal Polynomials\'\'\'\n{{#set:Section=0}}"+mainText+"\ndrmf_eof\n"
 					mainWrite.write(mainText)
 					mainWrite.close()
+					#print("x",x)
 					main.close()
-					os.system("cp -f OrthogonalPolynomials.mmd.new OrthogonalPolynomials.mmd")
+					if not any(["KLS" in i for i in lines]):
+						print("True dat")
+					else:
+						print("False",lines)
+						os.system("cp -f OrthogonalPolynomials.mmd.new OrthogonalPolynomials.mmd")
+					#print("True")
 					#wiki.write("\ndrmf_eof\n")
 					parse=False
 			  elif "\\title" in line and parse:

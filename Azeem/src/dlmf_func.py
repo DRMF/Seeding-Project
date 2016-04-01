@@ -207,18 +207,27 @@ def modLabel(label):
 	   return(newlabel)
 def DLMF_main(n):
 	for jsahlfkjsd in range(0,1):
-		tex=open(sys.argv[1],'r')
-		global wiki;
-		wiki = open(sys.argv[2], 'w')
-		main=open("ZetaFunctions.mmd","r")
+		try:
+			tex=open(sys.argv[1],'r')
+			wiki = open(sys.argv[2], 'w')
+			main=open("ZetaFunctions.mmd","r")
+		except:
+			tex=open(project_path+"AL.2.tex",'r')
+			wiki = open(project_path+"AL.2.xml", 'w')
+			main=open(project_path+"ZetaFunctions.mmd","r")
 		mainText=main.read()
 		mainPrepend=""
 		mainWrite=open("ZetaFunctions.mmd.new","w")
 		tester=open("testData.txt",'w')
 		#glossary=open('Glossary', 'r')
-		glossary=open('new.Glossary.csv', 'rb')
-		gCSV=csv.reader(glossary, delimiter=',', quotechar='\"')
-		lLinks=open('BruceLabelLinks', 'r')
+		try:
+			glossary=open('new.Glossary.csv', 'rb')
+			gCSV=csv.reader(glossary, delimiter=',', quotechar='\"')
+			lLinks=open('BruceLabelLinks', 'r')
+		except:
+			glossary=open(project_path+'new.Glossary.csv', 'rb')
+			gCSV=csv.reader(glossary, delimiter=',', quotechar='\"')
+			lLinks=open(project_path+'BruceLabelLinks', 'r')
 		lGlos=glossary.readlines()
 		lLink=lLinks.readlines()
 		math=False
@@ -233,7 +242,10 @@ def DLMF_main(n):
 		refEqs=[]
 		parse=False
 		head=False
-		chapRef=[("GA",open("GA.tex",'r')),("ZE",open("ZE.3.tex",'r'))]
+		try:
+			chapRef=[("GA",open("GA.tex",'r')),("ZE",open("ZE.3.tex",'r'))]
+		except:
+			chapRef=[("GA",open(project_path+"GA.tex",'r')),("ZE",open(project_path+"ZE.3.tex",'r'))]
 		refLabels=[]
 		for c in chapRef:
 		   refLines=refLines+(c[1].readlines())
@@ -647,7 +659,10 @@ def DLMF_main(n):
 						   gFlag=False
 						   checkFlag=False
 						   get=False
-						   gCSV=csv.reader(open('new.Glossary.csv','rb'),delimiter=',', quotechar='\"')
+						   try:
+						   	gCSV=csv.reader(open('new.Glossary.csv','rb'),delimiter=',', quotechar='\"')
+						   except:
+							gCSV=csv.reader(open(project_path+'new.Glossary.csv','rb'),delimiter=',', quotechar='\"')
 						   preG=""
 						   if symbol=="\\&":
 							  ampFlag=True
