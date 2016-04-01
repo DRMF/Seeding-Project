@@ -3,7 +3,6 @@
 import csv #imported for using csv format
 import sys #imported for getting args
 import os #imported for copying file
-import dlmf_func as dlmf
 project_path = "/home/pzw/DRMF-Seeding-Project/Azeem/src/" #Change Accordingly based on project directory.
 def isnumber(char): #Function to check if char is a number (assuming 1 character)
 	   return char[0] in "0123456789"
@@ -206,33 +205,31 @@ def modLabel(label):
 	   elif len(num)==1:
 			 newlabel+="0"+num
 	   return(newlabel)
-#try:
-def KLS_main(n):
+def DLMF_main(n):
 	for jsahlfkjsd in range(0,1):
 		try:
 			tex=open(sys.argv[1],'r')
-			#print(tex.read())
-			wiki=open(sys.argv[2],'w')
-			main = open("OrthogonalPolynomials.mmd", "r")
+			wiki = open(sys.argv[2], 'w')
+			main=open("ZetaFunctions.mmd","r")
 		except:
-			tex=open("/home/pzw/DRMF-Seeding-Project/data/09outb.tex",'r')
-			wiki=open("09outb.xml",'w')
-			main=open("/home/pzw/DRMF-Seeding-Project/Azeem/src/OrthogonalPolynomials.mmd","r")
-		#x = tex.read()
-		#print(x)
+			tex=open(project_path+"AL.2.tex",'r')
+			wiki = open(project_path+"AL.2.xml", 'w')
+			main=open(project_path+"ZetaFunctions.mmd","r")
 		mainText=main.read()
 		mainPrepend=""
-		mainWrite=open("OrthogonalPolynomials.mmd.new","w")
+		mainWrite=open("ZetaFunctions.mmd.new","w")
 		tester=open("testData.txt",'w')
 		#glossary=open('Glossary', 'r')
 		try:
 			glossary=open('new.Glossary.csv', 'rb')
+			gCSV=csv.reader(glossary, delimiter=',', quotechar='\"')
+			lLinks=open('BruceLabelLinks', 'r')
 		except:
-			glossary=open(project_path+"new.Glossary.csv","rb")
-		gCSV=csv.reader(glossary, delimiter=',', quotechar='\"')
-		#lLinks=open('BruceLabelLinks', 'r')
+			glossary=open(project_path+'new.Glossary.csv', 'rb')
+			gCSV=csv.reader(glossary, delimiter=',', quotechar='\"')
+			lLinks=open(project_path+'BruceLabelLinks', 'r')
 		lGlos=glossary.readlines()
-		#lLink=lLinks.readlines()
+		lLink=lLinks.readlines()
 		math=False
 		constraint=False
 		substitution=False
@@ -245,74 +242,82 @@ def KLS_main(n):
 		refEqs=[]
 		parse=False
 		head=False
-		#chapRef=[("GA",open("GA.tex",'r')),("ZE",open("ZE.3.tex",'r'))]
+		try:
+			chapRef=[("GA",open("GA.tex",'r')),("ZE",open("ZE.3.tex",'r'))]
+		except:
+			chapRef=[("GA",open(project_path+"GA.tex",'r')),("ZE",open(project_path+"ZE.3.tex",'r'))]
 		refLabels=[]
-		'''for c in chapRef:
+		for c in chapRef:
 		   refLines=refLines+(c[1].readlines())
-		   c[1].close()'''
+		   c[1].close()
 		for i in range(0,len(refLines)):
 		   line=refLines[i]
 		   if "\\begin{equation}" in line:
-				 sLabel=line.find("\\formula{")+9
+				 sLabel=line.find("\\label{")+7
 			  	 eLabel=line.find("}",sLabel)
-				 label=modLabel(line[sLabel:eLabel])
-				 '''for l in lLink:
+				 label=line[sLabel:eLabel]
+				 for l in lLink:
 					    if l.find(label)!=-1 and l[len(label)+1]=="=":
 							  rlabel=l[l.find("=>")+3:l.find("\\n")]
 							  rlabel=rlabel.replace("/","")
 							  rlabel=rlabel.replace("#",":")
-							  break'''
+							  break
+				 label=rlabel
 				 refLabels.append(label)
 				 refEqs.append("")
 				 math=True
 		   elif math:
-			   refEqs[-1:]+=line
+			   refEqs[len(refEqs)-1]+=line
 			   if "\\end{equation}" in refLines[i+1] or "\\constraint" in refLines[i+1] or "\\substitution" in refLines[i+1] or "\\drmfn" in refLines[i+1]:
 			   		    math=False
 
+		startFlag=True
 		for i in range(0,len(lines)):
 			  line=lines[i]
 			  if "\\begin{document}" in line:
 				 #wiki.write("drmf_bof\n")
 				 parse=True
-			  elif "\\end{document}" in line and parse:
+			  elif "\\end{document}" in line:
 					#wiki.write("</div>\n")
 					mainPrepend+="</div>\n"
+					mainText=""
 					mainText=mainPrepend+mainText
 					mainText=mainText.replace("drmf_bof\n","")
 					mainText=mainText.replace("drmf_eof\n","")
-					mainText=mainText.replace("\'\'\'Orthogonal Polynomials\'\'\'\n","")
+					mainText=mainText.replace("\'\'\'Zeta and Related Functions\'\'\'\n","")
 					mainText=mainText.replace("{{#set:Section=0}}\n","")
-					mainText=mainText[0:mainText.rfind("== Sections ")]
-					mainText="drmf_bof\n\'\'\'Orthogonal Polynomials\'\'\'\n{{#set:Section=0}}"+mainText+"\ndrmf_eof\n"
+					mainText="drmf_bof\n\'\'\'Zeta and Related Functions\'\'\'\n{{#set:Section=0}}"+mainText+"\ndrmf_eof\n"
 					mainWrite.write(mainText)
 					mainWrite.close()
-					#print("x",x)
 					main.close()
-					if not any(["KLS" in i for i in lines]):
-						print("True dat")
-					else:
-						os.system("cp -f OrthogonalPolynomials.mmd.new OrthogonalPolynomials.mmd")
-						print("False", lines)
-					#print("True")
+					os.system("cp -f ZetaFunctions.mmd.new ZetaFunctions.mmd")
 					#wiki.write("\ndrmf_eof\n")
 					parse=False
 			  elif "\\title" in line and parse:
-					stringWrite="\'\'\'"
-					stringWrite+=getString(line)+"\'\'\'\n"
-					labels.append("Orthogonal Polynomials")
-					sections.append(["Orthogonal Polynomials",0])
-			  		#wiki.write(stringWrite)
-					#mainPrepend+=stringWrite
-					chapter=getString(line)
-					mainPrepend+=("\n== Sections in "+chapter+" ==\n\n<div style=\"-moz-column-count:2; column-count:2;-webkit-column-count:2\">\n")
+					pass
+					'''stringWrite="\'\'\'"
+					stringWrite+=getString(line)+"\'\'\'\n"'''
+					labels.append("Zeta and Related Functions")
+					sections.append(["Zeta and Related Functions",0])
+					'''chapter=getString(line)
+					    mainPrepend+=("</div>\n== Sections in "+chapter+" ==\n\n<div style=\"-moz-column-count:2; column-count:2;-webkit-column-count:2\">\n")'''
 			  elif "\\part" in line:
 					if getString(line)=="BOF":
 						   parse=False
 					elif getString(line)=="EOF":
 						   parse=True
 					elif parse:
-						   mainPrepend+=("\n<br />\n= "+getString(line)+" =\n")
+						   #mainPrepend+=("\n<br />\n= "+getString(line)+" =\n")
+						   stringWrite="\'\'\'"
+						   stringWrite+=getString(line)+"\'\'\'\n"
+						   #labels.append(getString(line))
+						   #sections.append([getString(line),0])
+						   chapter=getString(line)
+						   if startFlag:
+							  mainPrepend+=("\n== Sections in "+chapter+" ==\n\n<div style=\"-moz-column-count:2; column-count:2;-webkit-column-count:2\">\n")
+							  startFlag=False
+						   else:
+							  mainPrepend+=("</div>\n\n== Sections in "+chapter+" ==\n\n<div style=\"-moz-column-count:2; column-count:2;-webkit-column-count:2\">\n")
 						   head=True
 			  elif "\\section" in line:
 					mainPrepend+=("* [["+secLabel(getString(line))+"|"+getString(line)+"]]\n")
@@ -333,7 +338,7 @@ def KLS_main(n):
 			  elif "\\title" in line and parse:
 					stringWrite="\'\'\'"
 					stringWrite+=getString(line)+"\'\'\'\n"
-					labels.append("Orthogonal Polynomials")
+					labels.append("Zeta and Related Functions")
 			  		wiki.write(stringWrite\n)
 			  elif "\\part" in line:
 					if getString(line)=="BOF":
@@ -352,8 +357,8 @@ def KLS_main(n):
 				  wiki.write("{{DISPLAYTITLE:"+(sections[secCounter][0])+"}}\n")
 				  wiki.write("<div id=\"drmf_head\">\n")
 				  wiki.write("<div id=\"alignleft\"> << [["+secLabel(sections[secCounter-1][0])+"|"+secLabel(sections[secCounter-1][0])+"]] </div>\n")
-				  #wiki.write("<div id=\"aligncenter\"> [[Orthogonal_Polynomials#"+secLabel(sections[secCounter][0])+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
-				  wiki.write("<div id=\"aligncenter\"> [[Orthogonal_Polynomials#"+"Sections_in_"+chapter.replace(" ","_")+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
+				  #wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+secLabel(sections[secCounter][0])+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
+				  wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+"Sections_in_"+chapter.replace(" ","_")+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
 				  wiki.write("<div id=\"alignright\"> [["+secLabel(sections[(secCounter+1)%len(sections)][0])+"|"+secLabel(sections[(secCounter+1)%len(sections)][0])+"]] >> </div>\n</div>\n\n")
 				  #wiki.write("{{head|pre="+secLabel(sections[secCounter-1][0])+"|cur="+secLabel(sections[secCounter][0])+"|next="+secLabel(sections[(secCounter+1)%len(sections)][0])+"}}\n")
 				  #wiki.write("{{#set:Chapter="+chapter+"}}\n")
@@ -364,8 +369,8 @@ def KLS_main(n):
 			  elif ("\\section" in lines[(i+1)%len(lines)] or "\\end{document}" in lines[(i+1)%len(lines)]) and parse:
 				  wiki.write("<div id=\"drmf_foot\">\n")
 				  wiki.write("<div id=\"alignleft\"> << [["+secLabel(sections[secCounter-1][0])+"|"+secLabel(sections[secCounter-1][0])+"]] </div>\n")
-				  #wiki.write("<div id=\"aligncenter\"> [[Orthogonal_Polynomials#"+secLabel(sections[secCounter][0])+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
-				  wiki.write("<div id=\"aligncenter\"> [[Orthogonal_Polynomials#"+"Sections_in_"+chapter.replace(" ","_")+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
+				  #wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+secLabel(sections[secCounter][0])+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
+				  wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+"Sections_in_"+chapter.replace(" ","_")+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
 				  wiki.write("<div id=\"alignright\"> [["+secLabel(sections[(secCounter+1)%len(sections)][0])+"|"+secLabel(sections[(secCounter+1)%len(sections)][0])+"]] >> </div>\n</div>\n\n")
 				  #wiki.write("{{foot|pre="+secLabel(sections[secCounter-1][0])+"|cur="+secLabel(sections[secCounter][0])+"|next="+secLabel(sections[(secCounter+1)%len(sections)][0])+"}}\n")
 				  #wiki.write("{{foot}}\n")
@@ -388,24 +393,25 @@ def KLS_main(n):
 					if head:
 					    wiki.write("\n")
 					    head=False
-					sLabel=line.find("\\formula{")+9
+					sLabel=line.find("\\label{")+7
 					eLabel=line.find("}",sLabel)
-					label=modLabel(line[sLabel:eLabel])
+					label=(line[sLabel:eLabel])
 					eqCounter+=1
-					'''for l in lLink:
+					for l in lLink:
 						   if label==l[0:l.find("=")-1]:
 								 rlabel=l[l.find("=>")+3:l.find("\\n")]
 								 rlabel=rlabel.replace("/","")
 								 rlabel=rlabel.replace("#",":")
 								 rlabel=rlabel.replace("!",":")
-								 break'''
-					labels.append(label)
+								 break
+					label=modLabel(rlabel)
+					labels.append("Formula:"+rlabel)
 					eqs.append("")
-					#wiki.write("\n<span id=\""+label.lstrip("Formula:")+"\"></span>\n")
-					wiki.write("<math id=\""+label.lstrip("Formula:")+"\">{\displaystyle \n")
+					#wiki.write("\n<span id=\""+rlabel.lstrip("Formula:")+"\"></span>\n")
+					wiki.write("<math id=\""+rlabel.lstrip("Formula:")+"\">{\displaystyle \n")
 					math=True
 			  elif "\\begin{equation}" in line and not parse:
-					sLabel=line.find("\\formula{")+9
+					sLabel=line.find("\\label{")+7
 					eLabel=line.find("}",sLabel)
 					label=modLabel(line[sLabel:eLabel])
 					'''for l in lLink:
@@ -469,16 +475,10 @@ def KLS_main(n):
 					if "\\end{equation}" in lines[i+1] or "\\constraint" in lines[i+1] or "\\substitution" in lines[i+1] or "\\drmfn" in lines[i+1]:
 					    math=False
 			  if substitution and parse:
-					subLine=subLine+line#.replace("&","&<br />")
+					subLine=subLine+line.replace("&","&<br />")
 					if "\\end{equation}" in lines[i+1] or "\\substitution" in lines[i+1] or "\\constraint" in lines[i+1] or "\\drmfn" in lines[i+1] or "\\proof" in lines[i+1]:
-					    lineR=""
-					    for i in range(0,len(subLine)):
-							  if subLine[i]=="&" and not (i>subLine.find("\\begin{array}") and i<subLine.find("\\end{array}")):
-									lineR+="&<br />"
-							  else:
-									lineR+=subLine[i]
 					    substitution=False
-					    wiki.write("<div align=\"right\">Substitution(s): "+getEq(lineR)+"</div><br />\n")
+					    wiki.write("<div align=\"right\">Substitution(s): "+getEq(subLine)+"</div><br />\n")
 
 			  if constraint and parse:
 					conLine=conLine+line.replace("&","&<br />")
@@ -534,11 +534,13 @@ def KLS_main(n):
 					symbols=[]
 					eqCounter+=1
 					wiki.write("drmf_bof\n")
-					#print("Length",len(labels),eqCounter)
 					label=labels[eqCounter]
-
+					#if not "DLMF" in label:eqCounter+=1
+					label=labels[eqCounter]
 					wiki.write("\'\'\'"+secLabel(label)+"\'\'\'\n")
 					wiki.write("{{DISPLAYTITLE:"+(labels[eqCounter])+"}}\n")
+					if eqCounter==len(labels)-1:
+						break
 					if eqCounter<endNum: #FOR ANYTHING THAT IS NOT THE EXTRA EQUATIONS
 					    wiki.write("<div id=\"drmf_head\">\n")
 					    if newSec:
@@ -547,7 +549,7 @@ def KLS_main(n):
 							  wiki.write("<div id=\"alignleft\"> << [["+secLabel(labels[eqCounter-1]).replace(" ","_")+"|"+secLabel(labels[eqCounter-1])+"]] </div>\n")
 					    wiki.write("<div id=\"aligncenter\"> [["+secLabel(sections[secCount+1][0]).replace(" ","_")+"#"+secLabel(labels[eqCounter][len("Formula:"):])+"|formula in "+secLabel(sections[secCount+1][0])+"]] </div>\n")
 					    #if eqS==sections[secCount][1]:
-							  #wiki.write("<div id=\"alignright\"> [["+secLabel(sections[(secCount+1)%len(sections)][0]).replace(" ","_")+"|"+secLabel(sections[(secCount+1)%len(sections)][0])+"]] >> </div>\n")
+					#		  wiki.write("<div id=\"alignright\"> [["+secLabel(sections[(secCount+1)%len(sections)][0]).replace(" ","_")+"|"+secLabel(sections[(secCount+1)%len(sections)][0])+"]] >> </div>\n")
 					    #else:
 					    if True:
 							  wiki.write("<div id=\"alignright\"> [["+secLabel(labels[(eqCounter+1)%(endNum+1)]).replace(" ","_")+"|"+secLabel(labels[(eqCounter+1)%(endNum+1)])+"]] >> </div>\n")
@@ -826,18 +828,17 @@ def KLS_main(n):
 
 					wiki.write("\n== Bibliography==\n\n")#should there be a space between bibliography and ==?
 					r=unmodLabel(labels[eqCounter])
-					q=r.find("KLS:")+4
+					q=r.find("DLMF:")+5
 					p=r.find(":",q)
 					section=r[q:p]
 					equation=r[p+1:]
-					print("Section",section,r,p,q,)
-					if is_number(section) == False:
-						return eqCounter
+					print("Section", section, r, p, q,)
 					if equation.find(":")!=-1:
 					    equation=equation[0:equation.find(":")]
-
-					wiki.write(
-						"<span class=\"plainlinks\">[http://homepage.tudelft.nl/11r49/askey/contents.html Equation in Section " + section + "]</span> of [[Bibliography#KLS|'''KLS''']].\n\n")  # Where should it link to?
+					if is_number(section) == False:
+						return eqCounter
+					wiki.write("<span class=\"plainlinks\">[HTTP://DLMF.NIST.GOV/"+section+"#"+equation+" Equation ("+equation[1:]+"), Section "+section+"]</span> of [[Bibliography#DLMF|'''DLMF''']].\n\n")
+					#wiki.write("<span class=\"plainlinks\">[http://homepage.tudelft.nl/11r49/askey/contents.html Equation in Section "+section+ "]</span> of [[Bibliography#KLS|'''KLS''']].\n\n")#Where should it link to?
 					wiki.write("== URL links ==\n\nWe ask users to provide relevant URL links in this space.\n\n")
 					if eqCounter<endNum:
 					    wiki.write("<br /><div id=\"drmf_foot\">\n")
@@ -848,7 +849,7 @@ def KLS_main(n):
 							  wiki.write("<div id=\"alignleft\"> << [["+secLabel(labels[eqCounter-1]).replace(" ","_")+"|"+secLabel(labels[eqCounter-1])+"]] </div>\n")
 					    wiki.write("<div id=\"aligncenter\"> [["+secLabel(sections[secCount+1][0]).replace(" ","_")+"#"+secLabel(labels[eqCounter][len("Formula:"):])+"|formula in "+secLabel(sections[secCount+1][0])+"]] </div>\n")
 					    #if eqS==sections[secCount][1]:
-							  #wiki.write("<div id=\"alignright\"> [["+sections[(secCount+1)%len(sections)][0].replace(" ","_")+"|"+sections[(secCount+1)%len(sections)][0]+"]] >> </div>\n")
+					#		  wiki.write("<div id=\"alignright\"> [["+sections[(secCount+1)%len(sections)][0].replace(" ","_")+"|"+sections[(secCount+1)%len(sections)][0]+"]] >> </div>\n")
 					    #else:
 					    if True:
 							  wiki.write("<div id=\"alignright\"> [["+secLabel(labels[(eqCounter+1)%(endNum+1)]).replace(" ","_")+"|"+secLabel(labels[(eqCounter+1)%(endNum+1)])+"]] >> </div>\n")
@@ -910,24 +911,24 @@ def KLS_main(n):
 								 pause=True
 								 eqR=line[ind:line.find("}",ind)+1]
 								 rLab=getString(eqR)
-								 '''for l in lLink:
+								 for l in lLink:
 		                   					 if rLab==l[0:l.find("=")-1]:
 		                         				   rlabel=l[l.find("=>")+3:l.find("\\n")]
 		                           				   rlabel=rlabel.replace("/","")
 		                         				   rlabel=rlabel.replace("#",":")
 		                         				   rlabel=rlabel.replace("!",":")
-		                    				           break'''
+		                    				           break
 
-								 eInd=refLabels.index(""+rLab)
+								 eInd=refLabels.index(""+rlabel)
 								 z=line[line.find("}",ind+7)+1]
 								 if z=="." or z==",":
 									pauseP=True
-									proofLine+=("<br /> \n<math id=\""+rLab+"\">{\displaystyle \n"+refEqs[eInd]+"}</math>"+z+"<br />\n")
+									proofLine+=("<br /> \n<math id=\""+label+"\">{\displaystyle \n"+refEqs[eInd]+"}</math>"+z+"<br />\n")
 								 else:
 									if z=="}":
-										   proofLine+=("<br /> \n<math id=\""+rLab+"\">{\displaystyle \n"+refEqs[eInd]+"}</math><br />")
+										   proofLine+=("<br /> \n<math id=\""+rlabel+"\">{\displaystyle \n"+refEqs[eInd]+"}</math><br />")
 									else:
-										   proofLine+=("<br /> \n<math id=\""+rLab+"\">{\displaystyle \n"+refEqs[eInd]+"}</math><br />\n")
+										   proofLine+=("<br /> \n<math id=\""+rlabel+"\">{\displaystyle \n"+refEqs[eInd]+"}</math><br />\n")
 
 
 						   else:
@@ -959,21 +960,21 @@ def KLS_main(n):
 								 pause=True
 								 eqR=line[ind:line.find("}",ind)+1]
 								 rLab=getString(eqR)
-								 '''for l in lLink:
+								 for l in lLink:
 		                   					 if rLab==l[0:l.find("=")-1]:
 		                         				   rlabel=l[l.find("=>")+3:l.find("\\n")]
 		                           				   rlabel=rlabel.replace("/","")
 		                         				   rlabel=rlabel.replace("#",":")
 		                         				   rlabel=rlabel.replace("!",":")
-		                    				           break'''
+		                    				           break
 
-	 							 eInd=refLabels.index(""+label)
+	 							 eInd=refLabels.index(""+rlabel.lstrip("Formula:"))
 								 z=line[line.find("}",ind+7)+1]
 								 if z=="." or z==",":
 									pauseP=True
-									proofLine+=("<br /> \n<math id=\""+rLab+"\">{\displaystyle \n"+refEqs[eInd]+"}</math>"+z+"<br />\n")
+									proofLine+=("<br /> \n<math id=\""+rlabel+"\">{\displaystyle \n"+refEqs[eInd]+"}</math>"+z+"<br />\n")
 								 else:
-									proofLine+=("<br /> \n<math id=\""+rLab+"\">{\displaystyle \n"+refEqs[eInd]+"}</math><br />\n")
+									proofLine+=("<br /> \n<math id=\""+rlabel+"\">{\displaystyle \n"+refEqs[eInd]+"}</math><br />\n")
 
 						   else:
 								 if pause:
@@ -1025,7 +1026,7 @@ def KLS_main(n):
 					    wiki.write(comToWrite+"<div align=\"left\">"+getEq(conLine)+"</div><br />\n")
 					    comToWrite=""
 			  if substitution and parse:
-					subLine=subLine+line#.replace("&","&<br />")
+					subLine=subLine+line.replace("&","&<br />")
 
 					symLine+=line.strip("\n")
 					#symbols=symbols+getSym(line)
@@ -1033,22 +1034,9 @@ def KLS_main(n):
 					    substitution=False
 					    symbols=symbols+getSym(symLine)
 					    symLine=""
-					    lineR=""
-					    for i in range(0,len(subLine)):
-							  if subLine[i]=="&" and not (i>subLine.find("\\begin{array}") and i<subLine.find("\\end{array}")):
-									lineR+="&<br />"
-							  else:
-								     lineR+=subLine[i]
-					    wiki.write(comToWrite+"<div align=\"left\">"+getEq(lineR)+"</div><br />\n")
+					    wiki.write(comToWrite+"<div align=\"left\">"+getEq(subLine)+"</div><br />\n")
 					    comToWrite=""
 	#except Exception as detail: #If exception occured
 	#	   print("Exception",detail) #print details of error
 	#except: #If anythin else occured...
 	#	 print ("ERROR",sys.exc_info()[0])#ERROR with basic info
-
-def main():
-	value = KLS_main(0);
-	if type(value) == int:
-		print("True")
-		dlmf.DLMF_main(value)
-main()
