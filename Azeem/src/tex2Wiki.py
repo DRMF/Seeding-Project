@@ -292,8 +292,8 @@ def KLS_main(n):
 					if not any(["KLS" in i for i in lines]):
 						print("True dat")
 					else:
-						print("False",lines)
 						os.system("cp -f OrthogonalPolynomials.mmd.new OrthogonalPolynomials.mmd")
+						print("False", lines)
 					#print("True")
 					#wiki.write("\ndrmf_eof\n")
 					parse=False
