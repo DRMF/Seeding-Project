@@ -7,4 +7,3 @@ class TestRemoveExcess(TestCase):
         content = 'AA{Begin} This should be removed {End}DDBB'
         result = remove_section(r'{Begin}', r'{End}', content)
         self.assertEqual('AA{End}DDBB', result)
-

@@ -1,5 +1,5 @@
 def checkEq(equation):
-    
+
     theta=False
     phi=False
     x=False
@@ -7,17 +7,17 @@ def checkEq(equation):
         theta=True
     if "\\phi" in equation:
         phi=True
-	mac=False
-    
+        mac=False
+
     for c in equation:
         if c=="\\":
             mac=True
         if not c.isalpha():
-		    mac=False
+            mac=False
         if not mac and c=="x":
-		    x=True
-		    break
-            
+            x=True
+            break
+
     if x and theta and not phi:
         return("$x=\\cos@@{\\theta}$ ")
     elif x and theta and phi:
@@ -26,22 +26,22 @@ def checkEq(equation):
         return("")
 
 def cos_substitution(input):
-    
+
     lines = input.split('\n')
     toWrite=""
     p=""
     math=False
     substitution=False
-    
+
     for line in lines:
-    
+
         if "\\begin{equation}" in line:
             math=True
             equation=""
             subLine=""
-            
+
         if "\\end{equation}" in line:
-                
+
             math=False
             substitution=False
             p=checkEq(equation)
@@ -56,19 +56,19 @@ def cos_substitution(input):
             else:
                 #toWrite+=subLine + '\n'    #CHERRY CHANGE
                 toWrite += subLine      #CHERRY CHANGE
-                
+
         if "\\substitution" in line:
             substitution=True
             math=False
             subLine=""
-		
+
         if math:
             equation+=line.replace("\n"," ")
             toWrite+=line + '\n'
-            
+
         elif substitution:
             subLine+=line + '\n'
-            
+
         else:
             toWrite+=line + '\n'
 

@@ -34,7 +34,7 @@ def superscript(num_args=1):
 
 #matches a simple argument list (no ; or |)
 def simple_arg_list(num_args=1, all_paren=False):
-   
+
     o_paren = open_paren
     c_paren = close_paren
     if not all_paren:
@@ -52,7 +52,7 @@ def simple_arg_list(num_args=1, all_paren=False):
 #matches argument lists with elements delimited by , | and ;
 #parameters ending in _ex signify exclusivity (i.e. semi_first_ex means a ; ONLY comes after the first argument)
 def semi_bar_arg_list(num_args, all_paren=False, semi_first_ex=False, semi_first=False, semi_last=False, semi_last_ex=False, num_groups=1, group_size=2, bar_first=False, bar_last=False):
- 
+
     o_paren = open_paren + r'?\('
     c_paren = close_paren + r'?\)'
     if not all_paren:
@@ -80,22 +80,22 @@ def semi_bar_arg_list(num_args, all_paren=False, semi_first_ex=False, semi_first
 
         if bar_first:       #bar is after first argument ONLY
 
-            pattern += _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", end=1)) + r'\|' + _whitespace + r'*'  
+            pattern += _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", end=1)) + r'\|' + whitespace + r'*'
             start_loc += 1
 
 
         elif semi_first:    #semicolon is after first argument
-           
-           pattern += _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", end=1)) + r';' + _whitespace + r'*'  
-           start_loc += 1
 
-           if semi_first_ex:#semicolon is ONLY after first argument
-               pattern += _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=start_loc, end=num_args-1))
-               start_loc = num_args - 1
+            pattern += _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", end=1)) + r';' + whitespace + r'*'
+            start_loc += 1
+
+            if semi_first_ex:#semicolon is ONLY after first argument
+                pattern += _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=start_loc, end=num_args-1))
+                start_loc = num_args - 1
 
     #semicolon is ONLY before last argument
     if semi_last_ex:
-        
+
         pattern += _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=start_loc, end=num_args-1))
 
     #unecessary if only first or last has ;
@@ -105,7 +105,7 @@ def semi_bar_arg_list(num_args, all_paren=False, semi_first_ex=False, semi_first
 
         #figure out how many items there are to be grouped
         if semi_last or bar_last:
-            expected -= 1    
+            expected -= 1
 
         #ensure that the number of groups, size of each one, and the number of arguments all make sense
         if num_groups * group_size != expected:
@@ -116,7 +116,7 @@ def semi_bar_arg_list(num_args, all_paren=False, semi_first_ex=False, semi_first
         for group in range(num_groups):
 
             pattern += _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=start_loc, end=start_loc+group_size))
-            pattern += _whitespace + r'*;'
+            pattern += whitespace + r'*;'
 
             start_loc += group_size
 
@@ -126,14 +126,14 @@ def semi_bar_arg_list(num_args, all_paren=False, semi_first_ex=False, semi_first
     if semi_last or bar_last:
         if semi_last:       #semicolon is before last argument
 
-            pattern += _whitespace + r'*;' + _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=num_args-1, end=num_args)) + r')'
+            pattern += whitespace + r'*;' + _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=num_args-1, end=num_args)) + r')'
 
         elif bar_last:      #bar is before last argument
 
-            pattern += _whitespace + r'*\|' + _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=num_args-1, end=num_args)) + r')'
+            pattern += whitespace + r'*\|' + _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=num_args-1, end=num_args)) + r')'
 
     else:                   #list ends normally
-    
+
         pattern += r'),' + _create_named_groups(_create_group_names(_frequencies["semi_bar_arg_list"], "arg", start=start_loc, end=num_args))
 
     pattern += c_paren
@@ -158,7 +158,7 @@ def _create_named_groups(*groups):
     pattern_string = ""
 
     for group in groups[0]:
-        pattern_string += r'{whitespace}*(?P<{group}>{valid}+),'.format(whitespace=_whitespace, group=group, valid=valid)
+        pattern_string += r'{whitespace}*(?P<{group}>{valid}+),'.format(whitespace=whitespace, group=group, valid=valid)
 
 
     return pattern_string[:-1]
@@ -169,7 +169,7 @@ def get_freq(name):
     return _frequencies[name]
 
 def main():
-    
+
     print("")
     print(r'R' + subscript() + semi_bar_arg_list(5,semi_first_ex=True, bar_last=True, all_paren=True))
     print("")

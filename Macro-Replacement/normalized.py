@@ -28,7 +28,7 @@ def replace_normalized(content):
     global names
     names = {}
     name_pat = re.compile(r'section{(.*?)}\s(.+)')
-    
+
     lines = normalized_file.split('\n')
     for line in lines:
         if len(name_pat.findall(line)) > 0:

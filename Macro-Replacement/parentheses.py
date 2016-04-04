@@ -7,7 +7,7 @@ _last_val = 0
 
 def remove(input, curly=False, cached=False):
     """Goes through input and replaces any opening and closing parentheses with numbered markers."""
-    
+
     global _last_val
 
     counter = 0
@@ -54,8 +54,8 @@ def insert(input, curly=False):
     """Goes through input and replaces any numbered markers with opening and closing parentheses."""
 
     o_rep = "("
-    c_rep = ")" 
-    
+    c_rep = ")"
+
     #adjust for curly braces
     if curly:
         o_rep = "{"

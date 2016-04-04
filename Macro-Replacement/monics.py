@@ -27,28 +27,28 @@ def replace_monics(content):
 
     monic_file = open('monic_names', 'r').read()
 
-    global names 
+    global names
     names = {}
     name_pat = re.compile(r'section{(.*?)}\s(.+)')
-    
+
     lines = monic_file.split('\n')
     for line in lines:
         if len(name_pat.findall(line)) > 0:
             list = name_pat.findall(line)[0]
             names[list[0]] = (list[1]).strip()
-                
+
     drmf = open('./DRMFfcns.sty', 'r').read()
     dlmf = open('./DLMFfcns.sty', 'r').read()
-    
+
     global drmfdlmf
     drmfdlmf = drmf + dlmf
-    
+
     KLS_pat = re.compile(r'section{([^\n]+)}\n(.+?){Symmetry}', re.DOTALL)
     content = KLS_pat.sub(rpl_section, content)
 
     section_pat = re.compile(r'section{(.+?)}(.+?)\\subsection\*{Reference', re.DOTALL)
     content = section_pat.sub(rpl_section, content)
-    
+
     return content
 
 def rpl_section(match):
@@ -56,7 +56,7 @@ def rpl_section(match):
     section_n = match.group(1)
     macro_n = names[section_n] # holds current macro name only
     matchstr = match.group(0)
-    
+
     params = 0
     args = 0
     dlmf_pat = re.compile(r'\\defSpecFun{' + macro_n + '}\[(\d)\].+?\[meaning=.+?\]{(\d)}')
@@ -92,23 +92,23 @@ def rpl_section(match):
 def find_name(match):
 
     matchstr = match.group(0)
-    macro_pat = re.compile(macro_regex) 
-    
+    macro_pat = re.compile(macro_regex)
+
     macro_pat.sub(find_args, matchstr)
     return
 
 def find_args(match):
 
     global fullmacro
-    fullmacro = '\\monic' + match.group(0) 
+    fullmacro = '\\monic' + match.group(0)
     return
 
 def make_monic(match):
 
     before_m = fullmacro.split('@')[0]
     before_m = before_m[:before_m.rfind('{')]
-    after_m = fullmacro.split('@')[1]    
-    
+    after_m = fullmacro.split('@')[1]
+
     if after_m.find('}{') != -1:
         after_m = after_m[after_m.find('}{') + 1:]
     else:
@@ -118,12 +118,12 @@ def make_monic(match):
     return output
 
 def cheby_case_helper(match):
-    
+
     cheby_pat = re.compile(r'\\begin{equation}(.+?)\\end{equation}\nwhere(.+?)\n', re.DOTALL)
     matchstr = cheby_pat.sub(cheby_case, match.group(0))
     return matchstr
 
-    
+
 def cheby_case(match):
 
     m = ''

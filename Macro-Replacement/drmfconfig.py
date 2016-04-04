@@ -50,7 +50,7 @@ class ConfigFile(object):
             except ValueError as ve:
                 print("ValueError: {0}".format(ve))
                 print(chunk)
-                sys.exit(-1) 
+                sys.exit(-1)
             regexes = regexes.split("~-~")
             replacements = replacements.split("~-~")
 

@@ -7,30 +7,30 @@ from drmfconfig import ConfigFile
 
 #parse command line args and either replace or generate replacement file
 def main():
-    
+
     parser = OptionParser(usage="usage: %prog [options] inputfile outputfile")
-    
+
     #validates mode, prevents both -r and -s
     def validate(option, opt_string, value, parser):
 
         to_raise = OptionValueError("cannot specify both search and replace")
         if opt_string == "--replace" or opt_string == "-r":
 
-            if parser.values.replace: 
-                raise to_raise 
+            if parser.values.replace:
+                raise to_raise
             setattr(parser.values, "replace", True)
 
         else:
 
-            if parser.values.search: 
-                raise to_raise 
+            if parser.values.search:
+                raise to_raise
             setattr(parser.values, "search", True)
 
     parser.add_option("-r", "--replace", default=False, action="callback", dest="replace", callback=validate, help="make replacements from input file write them to the output file [default]" )
     parser.add_option("-s", "--search", default=False, action="callback", dest="search", callback=validate, help="write a log of replacemnts that should be made in the input file to the output file (including line numbers)")
 
     parser.add_option("-v", "--verbose", action="store_true", default=False, dest="verbose", help="print out information about replacements as they occur")
-    
+
     parser.add_option("-c", "--config", action="store", default="function_regex", dest="config_file_name", help="the name of the configuration file to use")
 
     options, args = parser.parse_args()
@@ -54,10 +54,10 @@ def main():
     else:
         to_run = search
 
-    func_list = ConfigFile(options.config_file_name, verbose=options.verbose).all_funcs    
+    func_list = ConfigFile(options.config_file_name, verbose=options.verbose).all_funcs
 
     to_run.run(in_file, out_file, func_list)
 
 #call main function when this file is run directly
 if __name__ == "__main__":
-    main() 
+    main()

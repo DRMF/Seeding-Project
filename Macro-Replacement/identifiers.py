@@ -106,7 +106,7 @@ def replace7(match):
     tempstring += searchAll(match.group(1))
     tempstring += match.group(1)
     return tempstring
-    
+
 
 def replacealign(match):
 
@@ -224,13 +224,13 @@ def LabelAll(content, functions):
     content = re.sub(multlinepattern, _replace, content)
 
     #{eqnarray}
-    eqnarraypattern = re.compile(r'\\begin{(eqnarray)}(.*?)\\end{eqnarray}', re.DOTALL) 
+    eqnarraypattern = re.compile(r'\\begin{(eqnarray)}(.*?)\\end{eqnarray}', re.DOTALL)
     content = re.sub(eqnarraypattern, eqnarray_replace, content)
 
     #{eqnarray*}
     eqnstarpattern = re.compile(r'\\begin{(eqnarray\*)}\s*(.*?)\n\\end{eqnarray\*}', re.DOTALL)
     content = re.sub(eqnstarpattern, replacestar, content)
-    
+
     #{align}
     alignpattern = re.compile(r'\\begin{(align)}(.*?)\\end{align}', re.DOTALL)
     content = re.sub(alignpattern, replacealign, content)
@@ -240,5 +240,5 @@ def LabelAll(content, functions):
     #{align*}
     alignstarpattern = re.compile(r'\\begin{(align\*)}(.*?)\n\\end{align\*}', re.DOTALL)
     content = re.sub(alignstarpattern, replacestar, content)
-    
+
     return content

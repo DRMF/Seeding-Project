@@ -39,10 +39,10 @@ def main():
     else:
 
         fname = sys.argv[1]
-        ofname = sys.argv[2]   
+        ofname = sys.argv[2]
 
     writeout(ofname, remove_special(readin(fname)))
-    
+
 def remove_special(content):
     """Removes the excess pieces from the given content and returns the updated version as a string."""
 
@@ -97,7 +97,7 @@ def remove_special(content):
         r'\\widetilde', r'\\ZZ_{>0}', r'\\ZZ_{\\ge0}'
     ]
 
-    spaces_pat = re.compile(r' {2,}') 
+    spaces_pat = re.compile(r' {2,}')
     paren_pat = re.compile(r'\(\s*(.*?)\s*\)')
 
     dollar_pat = re.compile(r'(?<!\\)\$')
@@ -142,10 +142,10 @@ def remove_special(content):
         #if this line is an index start storing it, or write it if we're done with the indexes
         if IND_START in line:
             in_ind = True
-            ind_str += line    
+            ind_str += line
             continue
 
-        elif in_ind: 
+        elif in_ind:
 
             in_ind = False
 
@@ -164,10 +164,10 @@ def remove_special(content):
         for start,end in zip(EQ_STARTS,EQ_ENDS):
             #if this line marks the start of an equation, set the flag
             if start in line:
-                in_eq = True 
+                in_eq = True
                 break
-        
-            #if this line marks the end of an equation, set the flag 
+
+            #if this line marks the end of an equation, set the flag
             if end in line:
 
                 #remove other flags too
@@ -180,8 +180,8 @@ def remove_special(content):
                 break
 
         #we need to make the replacements in equations
-        if in_eq: 
-             
+        if in_eq:
+
             is_comment = line.lstrip().startswith("%")
 
             for p, r in zip(pattern_set, replacement_set):
@@ -192,18 +192,18 @@ def remove_special(content):
 
                 #go through each possible flag and see if it should be set
                 for flag, info in inside.iteritems():
-           
+
                     #name is present in this line, remember that we're in the block
                     if info[NAME] in line:
                         inside[flag][SEEN] = True
- 
+
                 comment_str += parentheses.remove(line, curly=True, cached=True) + "\n"
 
-            #only try to make replacements if this line isn't a comment 
+            #only try to make replacements if this line isn't a comment
             if not is_comment:
 
                 if '\\right.' not in line:
-                    line = line.rstrip(".")            
+                    line = line.rstrip(".")
                 line = _replace_i(line)
 
             elif any(info[SEEN] for info in inside.values()):   #we're in a special block, look for dollar signs to replace "i"s
@@ -214,7 +214,7 @@ def remove_special(content):
                     comment_str = comment_str[:-1]
 
                    #print([x for x in inside if inside[x][SEEN]])
-      
+
                      #reset special block flags
                     for flag in inside:
                         inside[flag][SEEN] = False
@@ -237,11 +237,11 @@ def remove_special(content):
                     comment_lines = parentheses.insert(comment_str, curly=True).split("\n")
                     comment_lines[-1] = re.sub(r'[.,]}[.,]?', r'}', comment_lines[-1])
                     updated.extend(comment_lines)
- 
+
                     comment_str = ""
 
                 continue
-            
+
         old = previous
         previous = line
         updated.append(line)
@@ -278,7 +278,7 @@ def _replace_i(words):
 
         #go through all the text/mathrm/label lines
         for start, end in avoid_bounds:
-            
+
             #if the "i" is in the \text tag, skip it
             if start < iloc < end:
                 #print(avoid_bounds)
@@ -293,9 +293,9 @@ def _replace_i(words):
 
         #ensure "i" does not occur at the beginning of the string
         if iloc != 0:
-            surrounding += words[iloc - 1] 
-                    
-        #ensure "i" does not occur at the end of the line     
+            surrounding += words[iloc - 1]
+
+        #ensure "i" does not occur at the end of the line
         if iloc != len(words) - 1:
             surrounding += words[iloc + 1]
 
@@ -309,22 +309,22 @@ def _replace_i(words):
 
                 #one (but not both) of the surrounding characters IS alphabetic, may need to replace
                 if any(s.isalpha() for s in surrounding):
-          
+
                     #character before is alphabetic
                     if surrounding[0].isalpha():
-                 
+
                         #character before is a vowel, replace
                         if surrounding[0] in "aeiou":
 
                             replacement = r'\iunit'
 
                     else:          #character after is alphabetic
-                                
+
                         #make sure we're not starting a macro
-                        if surrounding[0] != "\\": 
+                        if surrounding[0] != "\\":
 
                             replacement = r'\iunit '
-         
+
                 else:            #neither of the characters surrounding the "i" are alphabetic, replace
 
                     replacement = r'\iunit'
@@ -334,9 +334,8 @@ def _replace_i(words):
 
         iloc = words.find("i", iloc + len(replacement))
 
-    return words 
-    
+    return words
+
 
 if __name__ == "__main__":
     main()
-

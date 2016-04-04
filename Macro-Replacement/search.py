@@ -12,7 +12,7 @@ def run(inputfile, outputfile, all_funcs):
     #create dictionary that maps identifiers to function names
     for func in all_funcs:
         identifiers_info[func.abbr] = (func.macro, func.description)
-        
+
     line_lengths = [0]
 
     content = ""
@@ -26,19 +26,19 @@ def run(inputfile, outputfile, all_funcs):
 
             total_length += len(line)
             line_lengths.append(total_length)
-	
+
             content += line
 
     frequencies = [[] for i in range(len(line_lengths))]
 
     content = replace_basic(content)
-   
+
     seen = set()
 
     #go through each function and add an entry to the correct frequency list for every match found
     for func in all_funcs:
 
-        occurences = defaultdict(int) 
+        occurences = defaultdict(int)
 
         #go through each starting point and find out what line it's on
         for start_byte in func.get_all_starts(content):
@@ -50,7 +50,7 @@ def run(inputfile, outputfile, all_funcs):
 
         #go through each line with the current function on it and add an entry to the frequency list for that line
         for line_num in occurences:
-            
+
             new_entry = (occurences[line_num], func.abbr)
             frequencies[line_num].append(new_entry)
 
@@ -58,7 +58,7 @@ def run(inputfile, outputfile, all_funcs):
 
 def find_line(byte, line_lengths):
     """Determines which line the character byte bytes from the start of the file occurs on using a binary search."""
-    
+
     return _find_line_helper(byte, line_lengths, 0, len(line_lengths))
 
 #uses recursive binary-search-esque algorithm to find what line the given byte is on
@@ -95,14 +95,14 @@ def _find_line_helper(byte, line_lengths, start, end):
 
 def write_results(outputfile, frequencies, identifiers_info, seen):
     """Writes the completed frequencies list to output file in the appropriate format."""
-    
+
     #write the frequencies to the file
     with open(outputfile, "w") as out_file:
 
         #go through every line of the input file
         for line_num in range(len(frequencies)):
 
-            to_write = "{0}:".format(line_num) 
+            to_write = "{0}:".format(line_num)
             to_write = "{0:<6}".format(to_write)
 
             #only write if there are macros on the current line
@@ -110,7 +110,7 @@ def write_results(outputfile, frequencies, identifiers_info, seen):
                 continue
 
             #for every function on the line, output the number of times it occured on that line and its abbreviation
-            for occurences, abbr in frequencies[line_num]: 
+            for occurences, abbr in frequencies[line_num]:
 
                 to_write += ":{0} {1}".format(abbr, occurences)
 
@@ -121,12 +121,12 @@ def write_results(outputfile, frequencies, identifiers_info, seen):
 
 def create_usage_table(identifiers_info, seen):
     """Creates a table displaying the used identifiers and the macros they represent"""
-    
+
     format = "^70"
-    layout = "||| {0:^16} ||| {1:{3}} ||| {2:{3}} |||\n" 
+    layout = "||| {0:^16} ||| {1:{3}} ||| {2:{3}} |||\n"
 
     table_str = layout.format("Identifier", "Macro", "Description", format)
- 
+
     underline_length = int(format[1:]) * 3
     underline_string = "-" * underline_length
 

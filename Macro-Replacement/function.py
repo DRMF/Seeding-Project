@@ -2,10 +2,10 @@ import re
 
 class Function(object):
     """This class represents a mathematical function or polynomial. It provides methods to search for the function and replace it using a given replace function"""
-
+    #added name in __init__ arguments
     #create the function object with the given name, abbreviation, regex patterns, and replacement function
-    def __init__(self, macro, abbr, regexes, replacements, description, verbose=False):
-        
+    def __init__(self,name, macro, abbr, regexes, replacements, description, verbose=False):
+
         #ensure correct number of regexes and replacements have been provided
         if len(regexes) != len(replacements):
             raise ValueError(name + " - must provide the same number of replacements as regexes")
@@ -35,9 +35,9 @@ class Function(object):
                 print("\t\t\t\tERROR WHEN CREATING REGEX - {0} - {1} - {2}".format(regex, self._macro, e))
 
             all_matches = pattern.findall(content)
-            total += len(all_matches) 
+            total += len(all_matches)
             content = re.sub(pattern, self._move_and, content)
-            
+
             try:
                 content = re.sub(pattern, replacement, content)
             except Exception  as e:
@@ -97,16 +97,16 @@ class Function(object):
 
             #go through each match and add its starting location
             for match in pattern.finditer(content):
-                
+
                 #print more info if verbose
                 if self._verbose:
                     print("{0} - {1} - {2} - {3}".format(self._name, regex, match.start(),  match.group()))
 
                 starts.append(match.start())
-                
+
             #returns a string that maintains the number of lines in the file but will not match further patterns
             def repl(match):
-                return  "\n" * match.group().count("\n") 
+                return  "\n" * match.group().count("\n")
 
             content = pattern.sub(repl, content)
 
@@ -114,7 +114,7 @@ class Function(object):
 
     #counts the number of times each pattern occurs in lines
     def count(self, lines):
-        
+
         occurences = 0
 
         #use each regex to count occurences
@@ -124,7 +124,7 @@ class Function(object):
                 print('hi')
                 occurences += 2
                 continue
-             
+
             regex = re.compile(regex)
             occurences += len(regex.findall(lines))
             lines = regex.sub(' ', lines)                            #replace matches with ' ' to avoid rematching

@@ -17,7 +17,7 @@ def replace_basic(content):
 
     content = content.replace(r'\mid q', '|q')
     content = content.replace(r'\half', r'\frac{1}{2}')
-    
+
     return content
 
 #go through input file and make replacements specified

@@ -1,6 +1,6 @@
 #Divya Gandla
 #Master Code
-
+#Errors possibly fixed by Philip Wang
 import re
 
 #existing file named text.txt
@@ -323,13 +323,13 @@ def markup(file):
         location=equation.find(", Element")
         if location==-1:
             location=equation.find(",Element")
-	#there are no constraints if Element[ ] is not found
+        #there are no constraints if Element[ ] is not found
         if location==-1:
             location=len(equation)
 
         newFile=newFile+"\\begin{equation} \n" + equation[1:location] + "%  \\constraint{\n"
 
-	#find constraints
+        #find constraints
         c=findArgs(equation,"Element")
         for element in c:
             location=element.rfind(", ")
@@ -350,28 +350,29 @@ def markup(file):
                     else:
                         constraints.append(element[loc:element.find("|", loc+1)])
                         loc=element.find("|", loc+1)
-        print(var)	
-	    
+        print(var)      
+            
         for index in range(len(constraints)):
-            print(constraint)
+            #questionable fix starts here - Philip Wang
+            print(index)
             if (var=="Complexes"):
-                newFile="%      "+ newFile+ consraint+ "\in \Complex"
+                newFile="%      "+ newFile+ constraints[index]+ "\in \Complex"
             elif (var=="Wholes"):
-                newFile="%      "+ newFile+ consraint+ "\in \\NonNegInteger"
+                newFile="%      "+ newFile+ constraints[index]+ "\in \\NonNegInteger"
             elif (var=="Naturals"):
-                newFile="%      "+ newFile+ consraint+ "\in \\NatNumber"
+                newFile="%      "+ newFile+ constraints[index]+ "\in \\NatNumber"
             elif (var=="Integers"):
-                newFile="%      "+ newFile+ consraint+ "\in \Integer"
+                newFile="%      "+ newFile+ constraints[index]+ "\in \Integer"
             elif (var=="Irrationals"):
-                newFile="%      "+ newFile+ consraint+ "\in \Irrationals"
+                newFile="%      "+ newFile+ constraints[index]+ "\in \Irrationals"
             elif (var=="Reals"):
-                newFile="%      "+ newFile+ consraint+ "\in \Real"
+                newFile="%      "+ newFile+ constraints[index]+ "\in \Real"
             elif (var=="Rational"):
-                newFile="%      "+ newFile+ consraint+ "\in \Rational"
+                newFile="%      "+ newFile+ constraints[index]+ "\in \Rational"
             elif (var=="Primes"):
-                newFile="%      "+ newFile+ consraint+ "\in \Prime"
+                newFile="%      "+ newFile+ constraints[index]+ "\in \Prime"
     return newFile
-
+            #End questionable fix
 def equationSetUp(s):
 
 

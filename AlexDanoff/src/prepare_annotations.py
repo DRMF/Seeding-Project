@@ -101,7 +101,7 @@ def replace_comments(match):
             \\RiemannZeta'@{s} = - \\sum_{n=2}^\\infty (\\ln@@{n}) n^{-s}
             %  \\constraint{$\\realpart{s} > 1$}
         \\end{equation}
- 
+
     becomes::
 
         \\begin{equation}\\label{eq:ZE.EX.ZE5}
