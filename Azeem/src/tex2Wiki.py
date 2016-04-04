@@ -848,7 +848,7 @@ def KLS_main(n):
                 if eqCounter<endNum:
                     wiki.write("<br /><div id=\"drmf_foot\">\n")
                     if newSec:
-                        newSec=False
+                        newSec=Falseall_funcs = functions
                         wiki.write("<div id=\"alignleft\"> << [["+secLabel(sections[secCount][0]).replace(" ","_")+"|"+secLabel(sections[secCount][0])+"]] </div>\n")
                     else:
                         wiki.write("<div id=\"alignleft\"> << [["+secLabel(labels[eqCounter-1]).replace(" ","_")+"|"+secLabel(labels[eqCounter-1])+"]] </div>\n")
