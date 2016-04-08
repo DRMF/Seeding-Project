@@ -297,6 +297,7 @@ def readin(ofname,glossary,mmd):
         global wiki
         tex = open(ofname, 'r')
         main_file = open(mmd, "r")
+        #print main_file.read()[:10]
         mainText = main_file.read()
         mainPrepend = ""
         mainWrite = open("OrthogonalPolynomials.mmd.new", "w")
@@ -312,8 +313,12 @@ def readin(ofname,glossary,mmd):
         refEqs = []
         parse = False
         head = False
+        chapRef = [("GA", open("../../data/GA.tex", 'r')), ("ZE", open(ofname, 'r'))]
         refLabels = []
-        chapter = ''
+        for c in chapRef:
+            refLines = refLines + (c[1].readlines())
+            c[1].close()
+
         for i in range(0, len(refLines)):
             line = refLines[i]
             if "\\begin{equation}" in line:
