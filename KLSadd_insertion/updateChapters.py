@@ -44,10 +44,9 @@ def prepareForPDF(chap):
     #edits the chapter string sent to include hyperref, xparse, and cite packages
     #str[footmiscIndex] += "\\usepackage[pdftex]{hyperref} \n\\usepackage {xparse} \n\\usepackage{cite} \n"
     chap.insert(footmiscIndex, "\\usepackage[pdftex]{hyperref} \n\\usepackage {xparse} \n\\usepackage{cite} \n")
-
     return chap
 
-#2/18/16 this method reads in relevant commands that are in KLSadd.tex and returns them as a list and also adds
+#2/18/16 this method reads in relevant commands that are in KLSadd.tex and returns them as a list
 
 def getCommands(kls):
     index = 0
@@ -57,9 +56,6 @@ def getCommands(kls):
             newCommands.append(index-1)
         if("mybibitem[1]" in word):
             newCommands.append(index)
-           #add \large\bf KLSadd: to make KLSadd additions appear like the other paragraphs
-    #pretty sure I had to do something here but I forgot, so pass?
-    #duh, obviously I need to store the commands somewhere!
     comms = kls[newCommands[0]:newCommands[1]]
     return comms
 
@@ -68,7 +64,6 @@ def getCommands(kls):
 def insertCommands(kls, chap, cms):
     #reads in the newCommands[] and puts them in chap
     beginIndex = -1 #the index of the "begin document" keyphrase, this is where the new commands need to be inserted.
-
     #find index of begin document in KLSadd
     index = 0
     for word in kls:
@@ -86,11 +81,13 @@ def findReferences(chapter):
     references = []
     index = -1
     chaptercheck = 0
+    #chaptercheck designates which chapter is being searched for references
     if chapticker == 0:
         chaptercheck = str(9)
     elif chapticker == 1:
         chaptercheck = str(14)
     canAdd = False
+    #canAdd tells the program whether the next section is a reference
     for word in chapter:
         index+=1
         #check sections and subsections
@@ -101,10 +98,11 @@ def findReferences(chapter):
                 subunit = unit[unit.find(" ")+1: unit.find("#")]
                 if ((w in subunit) or (ws in subunit)) and (chaptercheck in unit) and (len(w) == len(subunit)) or (("Pseudo Jacobi" in w) and ("Pseudo Jacobi (or Routh-Romanovski)" in subunit)):
                     canAdd = True
+                    #System of checks that verifies if section is in chapter
         if("\\subsection*{References}" in word) and (canAdd == True):
             references.append(index)
             canAdd = False
-
+            #Appends valid locations
     return references
 
 #method to change file string(actually a list right now), returns string to be written to file
@@ -118,13 +116,9 @@ def fixChapter(chap, references, p, kls):
         designator = "9."
     elif chapticker2 == 1:
         designator = "14."
-    designator = str(designator)
     for i in references:
         #Place before References paragraph
-        if count > 34:
-            word1 = "14. Banana"
-        else:
-            word1 = str(p[count])
+        word1 = str(p[count])
         if (designator in word1[word1.find("\\subsection*{") + 1: word1.find("}") ]):
             chap[i-2] += "%Begin KLSadd additions"
             chap[i-2] += p[count]
@@ -139,8 +133,8 @@ def fixChapter(chap, references, p, kls):
                     chap[i - 2] += "%End of KLSadd additions"
                     count += 1
                 else:
-
                     count+=1
+            #Unfinished code segment that inserts the collected paras into the chapter
     chap = prepareForPDF(chap)
     cms = getCommands(kls)
     chap = insertCommands(kls,chap, cms)
@@ -161,13 +155,13 @@ def fixChapter(chap, references, p, kls):
                 wordtoadd = "%" + word
                 chap[commentticker] = wordtoadd
         commentticker += 1
-        # Hopefully this works
+        #Hard coded command remover
     ticker1 = 0
     while ticker1 < len(chap):
         if ('\\myciteKLS' in chap[ticker1]):
             chap[ticker1] = chap[ticker1].replace('\\myciteKLS', '\\cite')
         ticker1 += 1
-    #probably won't work because I don't know how anything works
+        #Formatting to make the Latex file run
     return chap
 
 #open the KLSadd file to do things with
@@ -182,6 +176,7 @@ with open("KLSadd.tex", "r") as add:
         if ("subsubsection*{" in word):
             lenword = len(word) - 1
             addendum[addendum.index(word)] = word[0:word.find("{") + 1] + "\large\\bf KLSadd: " + word[word.find("{") + 1: lenword]
+        #Font processing
     index = 0
     indexes = []
     for word in addendum:
@@ -195,6 +190,7 @@ with open("KLSadd.tex", "r") as add:
                 chapNums.append(14)
                 name = word[word.find("{") + 1: word.find("}") ]
                 mathPeople.append(name + "#")
+            #Designates sections that need stuff added
             #get the index
             indexes.append(index-1)
     #now indexes holds all of the places there is a section
@@ -202,7 +198,8 @@ with open("KLSadd.tex", "r") as add:
     for i in range(len(indexes)-1):
         box = ''.join(addendum[indexes[i]: indexes[i+1]-1])
         paras.append(box)
-    paras.append("% This is a test")
+    box2 = ''.join(addendum[indexes[35]: 2245])
+    paras.append(box2)
     #paras now holds the paragraphs that need to go into the chapter files, but they need to go in the appropriate
     #section(like Wilson, Racah, Hahn, etc.) so we use the mathPeople variable
     #we can use the section names to place the relevant paragraphs in the right place
