@@ -784,7 +784,6 @@ def readin(ofname,glossary,mmd):
                             p1 = G[4].strip("$")
                             p1 = "<math>{\\displaystyle " + p1 + "}</math>"
                             # if checkFlag:
-                            new1 = ""
                             new2 = ""
                             pause = False
                             mathF = True
@@ -917,6 +916,7 @@ def readin(ofname,glossary,mmd):
                 pauseP = False
                 for ind in range(0, len(line)):
                     if line[ind:ind + 7] == "\\eqref{":
+                        rLab = getString(eqR)
                         pause = True
                         eInd = refLabels.index("" + rLab)
                         z = line[line.find("}", ind + 7) + 1]
