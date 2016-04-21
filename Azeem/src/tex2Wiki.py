@@ -629,7 +629,6 @@ def readin(ofname,glossary,mmd):
 
                 wiki.write("\n== Symbols List ==\n\n")
                 newSym = []
-                # if "09.07:04" in label:
                 for x in symbols:
                     flagA = True
                     # if x not in newSym:
@@ -706,8 +705,6 @@ def readin(ofname,glossary,mmd):
                             symbol = symbolPar[0:symbolPar.find("{")]
                     else:
                         symbol = symbolPar
-                    numArg = parCx
-                    numPar = ArgCx
                     gFlag = False
                     checkFlag = False
                     get = False
@@ -750,7 +747,7 @@ def readin(ofname,glossary,mmd):
                             get = True
                             checkFlag = False
 
-                        if (get):
+                        if get:
                             if get:
                                 G = preG
                             get = False
@@ -950,13 +947,9 @@ def readin(ofname,glossary,mmd):
                     comToWrite = ""
                     symbols = symbols + getSym(symLine)
                     symLine = ""
-
-                # wiki.write(line)
-
             elif proof:
                 symLine += line.strip("\n")
                 pauseP = False
-                # symbols=symbols+getSym(line)
                 for ind in range(0, len(line)):
                     if line[ind:ind + 7] == "\\eqref{":
                         pause = True
@@ -985,7 +978,6 @@ def readin(ofname,glossary,mmd):
                             proofLine += (line[ind])
                 if "\\end{equation}" in lines[i + 1]:
                     proof = False
-                    # symLine+=line.strip("\n")
                     wiki.write(comToWrite + getEqP(proofLine, False).rstrip("\n") + "</div>\n<br />\n")
                     comToWrite = ""
                     symbols = symbols + getSym(symLine)
@@ -1035,7 +1027,6 @@ def readin(ofname,glossary,mmd):
                 subLine = subLine + line  # .replace("&","&<br />")
 
                 symLine += line.strip("\n")
-                # symbols=symbols+getSym(line)
                 if "\\end{equation}" in lines[i + 1] or "\\drmfn" in lines[i + 1] or "\\substitution" in lines[
                             i + 1] or "\\constraint" in lines[i + 1] or "\\proof" in lines[i + 1]:
                     substitution = False
@@ -1050,7 +1041,3 @@ def readin(ofname,glossary,mmd):
                             lineR += subLine[i]
                     wiki.write(comToWrite + "<div align=\"left\">" + getEq(lineR) + "</div><br />\n")
                     comToWrite = ""
-# except Exception as detail: #If exception occured
-#	   print("Exception",detail) #print details of error
-# except: #If anythin else occured...
-#	 print ("ERROR",sys.exc_info()[0])#ERROR with basic info
