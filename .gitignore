@@ -26,6 +26,7 @@ lib64/
 parts/
 sdist/
 var/
+/data
 *.egg-info/
 /KLSadd_insertion/hsc09.pdf
 /KLSadd_insertion/hsc09.tex
