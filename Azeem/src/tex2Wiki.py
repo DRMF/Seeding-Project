@@ -2,6 +2,7 @@
 # Convert tex to wikiText
 import csv  # imported for using csv format
 import sys  # imported for getting args
+import DLMF # imported for merging functionality for DLMF and KLS
 from shutil import copyfile
 import xml.etree.ElementTree as ET
 import datetime
@@ -293,7 +294,7 @@ def setup_label_links(ofname):
 
 def readin(ofname,glossary,mmd):
     # try:
-    for jsahlfkjsd in range(0, 1):
+    for iterations in range(0, 1):
         tex = open(ofname, 'r')
         main_file = open(mmd, "r")
         mainText = main_file.read()
