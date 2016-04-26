@@ -2,12 +2,13 @@
 # Convert tex to wikiText
 import csv  # imported for using csv format
 import sys  # imported for getting args
-import DLMF # imported for merging functionality for DLMF and KLS
+import DLMF as dlmf # imported for merging functionality for DLMF and KLS
 from shutil import copyfile
 import xml.etree.ElementTree as ET
 import datetime
 
-wiki = ''
+
+return_index = 0
 next_formula_number = 0
 lLink = ''
 ET.register_namespace('', 'http://www.mediawiki.org/xml/export-0.10/')
@@ -15,9 +16,10 @@ root = ET.Element('{http://www.mediawiki.org/xml/export-0.10/}mediawiki')
 
 
 def isnumber(char):  # Function to check if char is a number (assuming 1 character)
-    return char[0] in "0123456789"
-
-
+    try:
+        float(char)
+    except ValueError:
+        return False
 def getString(line):  # Gets all data within curly braces on a line
     # -------Initialization-------
     stringWrite = ""
@@ -283,7 +285,7 @@ def main():
         glossary = sys.argv[4]
         mmd = sys.argv[5]
     setup_label_links(lname)
-    readin(fname,glossary,mmd)
+    detect_data_set(fname,ofname,glossary,mmd,0)
     writeout(ofname)
 
 
@@ -292,17 +294,18 @@ def setup_label_links(ofname):
     lLink = open(ofname, "r").readlines()
 
 
-def readin(ofname,glossary,mmd):
+def readin(fname,ofname,gloss,mmd,eqIndex):
     # try:
     for iterations in range(0, 1):
-        tex = open(ofname, 'r')
+        tex = open(fname, 'r')
         main_file = open(mmd, "r")
         mainText = main_file.read()
         mainPrepend = ""
         mainWrite = open("OrthogonalPolynomials.mmd.new", "w")
+        wiki = open(ofname, 'w')
         tester = open("testData.txt", 'w')
         # glossary=open('Glossary', 'r')
-        glossary = open('new.Glossary.csv', 'rb')
+        glossary = open(gloss, 'rb')
         gCSV = csv.reader(glossary, delimiter=',', quotechar='\"')
         # lLinks=open('BruceLabelLinks', 'r')
         lGlos = glossary.readlines()
@@ -528,7 +531,7 @@ def readin(ofname,glossary,mmd):
                     constraint = False
                     wiki.write("<div align=\"right\">Constraint(s): " + getEq(conLine) + "</div><br />\n")
 
-        eqCounter = 0
+        eqCounter = eqIndex #changed from 0
         endNum = len(labels) - 1
 
         parse = False
@@ -548,6 +551,7 @@ def readin(ofname,glossary,mmd):
         noteLine = ''
         proofLine = ''
         pause = False
+
         for i in range(0, len(lines)):
             line = lines[i]
 
@@ -620,6 +624,7 @@ def readin(ofname,glossary,mmd):
 
                 wiki.write("<br /><div align=\"center\"><math>{\displaystyle \n")
                 math = True
+
             elif "\\end{equation}" in line:
                 wiki.write(comToWrite)
                 parse = False
@@ -709,7 +714,7 @@ def readin(ofname,glossary,mmd):
                     gFlag = False
                     checkFlag = False
                     get = False
-                    gCSV = csv.reader(open('new.Glossary.csv', 'rb'), delimiter=',', quotechar='\"')
+                    gCSV = csv.reader(open(gloss, 'rb'), delimiter=',', quotechar='\"')
                     preG = ""
                     if symbol == "\\&":
                         ampFlag = True
@@ -826,6 +831,8 @@ def readin(ofname,glossary,mmd):
                 p = r.find(":", q)
                 section = r[q:p]
                 equation = r[p + 1:]
+                if isnumber(section) == False: #checks for invalid section numbers
+                    return eqCounter #return the index of failure, tries with DLMF data set
                 if equation.find(":") != -1:
                     equation = equation[0:equation.find(":")]
 
@@ -1042,3 +1049,20 @@ def readin(ofname,glossary,mmd):
                             lineR += subLine[i]
                     wiki.write(comToWrite + "<div align=\"left\">" + getEq(lineR) + "</div><br />\n")
                     comToWrite = ""
+
+def detect_data_set(fname,ofname,glossary,mmd,eqIndex):
+    kls_return_status = readin(fname,ofname,glossary,mmd,eqIndex) #gets return type of the KLS readin() function
+    if type(kls_return_status) == int: #return status will only be of type int if the readin() returns the index of failure. Will try running the DLMF function on the data set starting from the index of failure
+        dlmf_return_status = dlmf.DLMF(kls_return_status)  #runs the DLMF function starting from the index of failure
+        if type(dlmf_return_status) == int:
+            detect_data_set(fname,ofname,glossary,mmd,eqIndex) #recursively call detect_data_set to switch back to KLS
+    return 0
+
+if __name__ == "__main__":
+    main()
+
+
+# TODO: Bug test detect_data_set function and fix possible code smells, check if outfile is being written correctly
+
+
+

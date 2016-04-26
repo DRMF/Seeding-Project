@@ -3,7 +3,7 @@
 import csv #imported for using csv format
 import sys #imported for getting args
 import os #imported for copying file
-project_path = "/home/pzw/DRMF-Seeding-Project/Azeem/src/" #Change Accordingly based on project directory.
+project_path = "/home/pzw/DRMF-Seeding-Project/data/" #Change Accordingly based on project directory.
 def isnumber(char): #Function to check if char is a number (assuming 1 character)
     return char[0] in "0123456789"
 def is_number(char):
@@ -205,7 +205,7 @@ def modLabel(label):
     elif len(num)==1:
         newlabel+="0"+num
     return(newlabel)
-def DLMF_main(n):
+def DLMF(n):
     for jsahlfkjsd in range(0,1):
         try:
             tex=open(sys.argv[1],'r')
@@ -832,7 +832,7 @@ def DLMF_main(n):
                 p=r.find(":",q)
                 section=r[q:p]
                 equation=r[p+1:]
-                print("Section", section, r, p, q,)
+                #print("Section", section, r, p, q,)
                 if equation.find(":")!=-1:
                     equation=equation[0:equation.find(":")]
                 if is_number(section) == False:
@@ -1036,7 +1036,3 @@ def DLMF_main(n):
                     symLine=""
                     wiki.write(comToWrite+"<div align=\"left\">"+getEq(subLine)+"</div><br />\n")
                     comToWrite=""
-    #except Exception as detail: #If exception occured
-    #          print("Exception",detail) #print details of error
-    #except: #If anythin else occured...
-    #        print ("ERROR",sys.exc_info()[0])#ERROR with basic info
