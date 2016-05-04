@@ -1,0 +1,108 @@
+
+=======================================================================================
+AuthorsComments.txt
+=======================================================================================
+
+In response to the editor's comments, I have amended the text in § 3.1. However, I 
+think that the derivation of the even result should remain as it is, since to do 
+otherwise would be a disservice to the reader who wishes to understand where the 
+form of solution that has been obtained comes from.
+
+---
+
+In response to the first referee's comments, I would first like to express my immense 
+gratitude to the referee, for reading my paper so carefully, and providing such 
+extensive and helpful criticism, which has enabled me to improve the standard of the 
+paper in so many places: I cannot thank the referee nearly enough for the considerable 
+time that they must have spent on this, and the very considerable improvement in the 
+content in the paper that has resulted. In regard to the specific comments made, I 
+have the following remarks:
+
+General comments
+
+I have included a distributional discussion of the fundamental solution approach 
+in §2, which I hope is now mathematically satisfactory.  
+
+§ 2 now also contains a brief discussion of uniqueness and the scheme adopted to 
+choose a specific solution.  I have entirely rewritten § 3.3 to address this 
+comment: the later discussions of the constant are now strictly verification of 
+local behaviour.
+
+I have changed the notation to be as consistent as possible, although as the editor 
+is no doubt aware, some overlap is inevitable when using results from different areas 
+of mathematics.  
+
+I have reconsidered the various notations used; I hope all notation in the 
+manuscript is now sufficiently defined.
+
+I have added back variables to functions in all cases but where to do so would 
+with spacing requirements, and specifically indicated where this has occurred.
+I have clarified definitions as much as possible without abusing mathematical 
+grammar.
+
+The general radius case is now considered throughout, and flat-space limits 
+are discussed in several places, including § 3.3 and pp.9, 10. The author is 
+puzzled by the referee's comment about applications, since neither Cohl's paper 
+nor Szmtkowski's includes any, and we consider applications to two other 
+spaces in § 5.
+
+§ 4 has been completely rewritten to reflect this comment, with theorems, 
+lemmata and proofs in standard order, rather than the original expository style.
+
+Specific comments (omitted bullets have been acted upon without any remark felt 
+necessary):
+
+* Sentence structures have been altered to address the first four points.
+* Equation numbers have been removed in cases where not explicitly referred to.
+* Language has been adjusted in most cases highlighted, but the author is 
+  somewhat puzzled by how else one would refer to half-integers that are not 
+  integers than "proper", in analogy with other uses of "proper" in mathematics, 
+  such as "proper subset".
+* The author was under the impression that the standard and correct notation for 
+  the inverse tangent is "arg tanh", see e.g. Hardy, "The integration of functions 
+  of a single variable", p.6; Spivak, "Calculus", p.350; Pearson, "Handbook of 
+  Applied Mathematics", p.37. There are also many papers on arXiv that use this 
+  notation, such as, e.g., Merle & Zaag, arXiv:1309.7756v3. As Pringsheim, Faber 
+  and Molk remark in their article in the "Encyclopédie des sciences mathématiques", 
+  (Tome II, Vol. II, p.80), "The notation arc sh z also in use is incorrect, 
+  because the inverse function of sh z is not defined via an arc." As far as the 
+  author is aware, there is also no standard notation for the cyclic groups 
+  (see, for example, the second paragraph of 
+  http://mathworld.wolfram.com/CyclicGroup.html ).  
+  
+p.2, l.19 The notation the referee objects to has been clarified and disambiguated.
+p.2, l.-6 has been reworded.
+p.3, l.3 It is the author's understanding that charts are maps from open sets; 
+     the sentence has been rewritten to clarify what is essential.
+p.3, § 3.1, l.-1 Section has been rewritten to clarify this.
+p.4, l.-7 Sentence reworded to clarify that it is the form of the expressions 
+     being discussed.
+p.4, l.-2 Have reinstated variables in all but the most crowded of expressions, 
+     with clear indication of the abbreviations made when necessary.
+p.9, Remark 1 Clarification of the difference in sign convention has been made, 
+     along with correcting a typo as suggested by the second referee, and writing 
+     out Szmytkowski's solution explicitly in their notation.
+p.10, l.14 Citations have been altered as suggested.
+p.11 Section has been rewritten entirely.
+p.11, § 5 Section has been transformed into a subsection of the next section, 
+     concerning applications to problems beyond that originally discussed.
+p.12, §6 has been supplemented with additional formulae, references to earlier 
+    sections, and explanation: I hope that this has clarified the derivation.
+p.13, 14, Appendix A. Notation has been changed to be less ambiguous. The author 
+    is aware that parts of this result are known, but has never seen the full 
+    classification noted; he would be grateful if the referee would provide 
+    a citation.
+p.15 Appendix B has been removed as no longer relevant to the derivation, 
+    since a closed form has now been obtained.
+
+References have been amended as recommended.
+
+---
+
+In response to the second referee's comments, I have acted on all their 
+recommendations.  In particular, Remark 1 now covers both the n=2 and n=4 cases, 
+and I have included Remark 2 to compare the n=3 and n=5 cases. I have also 
+totally rewritten the odd case derivation.  I would like to thank the referee 
+for their suggestions, which have brought about a more convincing test of the 
+consistency of my solutions with those of Szmytkowski, as well as the other 
+minor mistakes that I have been able to correct.

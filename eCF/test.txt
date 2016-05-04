@@ -1,0 +1,6 @@
+E^(z/2)*m!*Gamma[(1 - m)/2 - \[Nu]]
+
+
+ConditionalExpression[WhittakerW[\[Nu], m/2, z] == -(((-1)^m*z^((1 + m)/2)*Log[z])/(E^(z/2)*m!*Gamma[(1 - m)/2 - \[Nu]]*(1 + Inactive[ContinuedFractionK][-(z*(-1 + 2*k + m - 2*\[Nu]))/(2*k*(k + m)), 1 + (z*(-1 + 2*k + m - 2*\[Nu]))/(2*k*(k + m)), {k, 1, Infinity}]))) + (z^((1 - m)/2)*(-1 + m)!)/(E^(z/2)*Gamma[(1 + m - 2*\[Nu])/2]*(1 + Inactive[ContinuedFractionK][(z*(1 - 2*k + m + 2*\[Nu]))/(2*k*(k - m)), 1 - (z*(1 - 2*k + m + 2*\[Nu]))/(2*k*(k - m)), {k, 1, -1 + m}])) - ((-1)^m*z^((1 + m)/2)*(EulerGamma - PolyGamma[0, 1 + m] + PolyGamma[0, (1 + m)/2 - \[Nu]]))/(E^(z/2)*m!*Gamma[(1 - m)/2 - \[Nu]]*(1 + Inactive[ContinuedFractionK][-(z*(-1 + 2*k + m - 2*\[Nu])*(PolyGamma[0, 1 + k] + PolyGamma[0, 1 + k + m] - PolyGamma[0, k + (1 + m)/2 - \[Nu]]))/(2*k*(k + m)*(PolyGamma[0, k] + PolyGamma[0, k + m] - PolyGamma[0, -1/2 + k + m/2 - \[Nu]])), 1 + (z*(-1 + 2*k + m - 2*\[Nu])*(PolyGamma[0, 1 + k] + PolyGamma[0, 1 + k + m] - PolyGamma[0, k + (1 + m)/2 - \[Nu]]))/(2*k*(k + m)*(PolyGamma[0, k] + PolyGamma[0, k + m] - PolyGamma[0, -1/2 + k + m/2 - \[Nu]])), {k, 1, Infinity}])), Element[m, Integers] && Element[\[Nu] | z, Complexes] && m > 0]
+
+(E^(z/2)*m!*Gamma[(1 - m)/2 - \[Nu]]*(1))
