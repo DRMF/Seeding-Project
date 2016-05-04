@@ -4,17 +4,18 @@ import sys
 
 filename = "mpl/modbessel.mpl"
 
-functions = dict((line.split(" || ")[0], line.split(" || ")[1:]) for line in
-                 open("keys/functions").read().split("\n")[1:-1])
-spacing = list([line, " "+line+" "] for line in
-               open("keys/spacing").read().split("\n")[1:-1])
-symbols = list(line.split(" || ") for line in
-               open("keys/symbols").read().split("\n")[1:-1]
+
+def make_list(name):
+    return list(line.split(" || ") for line in open(name).read().split("\n")
+                if line != "" and "%" not in line)
+
+functions = dict(tuple(line.split(" || ", 1)) for line in open("keys/functions").read().split("\n")
+                 if line != "" and "%" not in line)
+spacing = list((line, " "+line+" ") for line in open("keys/spacing").read().split("\n")
                if line != "" and "%" not in line)
-parentheses = list(line.split(" || ") for line in
-                   open("keys/parens").read().split("\n")[1:-1])
-special = list(line.split(" || ") for line in
-               open("keys/special").read().split("\n")[1:-1])
+symbols = make_list("keys/symbols")
+special = make_list("keys/special")
+parentheses = [["(", "\\left("], [")", "\\right)"]]
 
 
 def format_text(string, li):
@@ -98,7 +99,7 @@ def translate(exp):
 
             if len(info) == 2:
                 l -= 1
-                func = info[1]
+                func = info[1].split(" || ")
                 piece = piece[1:-1].split(",")
                 result = [func[-1]]
                 for c in range(len(piece))[::-1]:
@@ -123,44 +124,64 @@ def convert(info):
     # conditional parameters
     general, factor, begin, even, odd, front = "", "", "", "", "", ""
 
-    for param in info:
-        command = param + "="
+    for param in info:  # initializes all variables used
+        if param == 'exp_type':
+            exp_type = info['exp_type']
 
-        if param in ["lhs", "factor", "constraints", "front"]:
-            command += "r'"+translate(info[param])+"'"
-        else:
-            command += "r'"+info[param]+"'"
+        elif param == 'category':
+            category = info['category']
 
-        exec command
+        elif param == 'parameters':
+            parameters = info['parameters']
+
+        elif param == 'lhs':
+            lhs = translate(info['lhs'])
+
+        elif param == 'label':
+            label = info['label']
+
+        elif param == 'booklabel':
+            booklabel = info['booklabel']
+
+        elif param == 'constraints':
+            constraints = translate(info['constraints'])
+
+        elif param == 'general':
+            general = info['general']
+
+        elif param == 'factor':
+            factor = translate(info['factor'])
+
+        elif param == 'begin':
+            begin = info['begin']
+
+        elif param == 'even':
+            even = info['even']
+
+        elif param == 'odd':
+            odd = info['odd']
+
+        elif param == 'front':
+            front = translate(info['front'])
 
     result = "\\begin{equation*}\\tag{"+booklabel+"}\n  "+lhs+"\n  = "
 
     # translates the Maple information (with spacing)
     if exp_type == "series":
-        # maybe something involving infix to postfix for the asymptotic series?
         general = translate(general)
 
         result += factor+" \\sum_{k=0}^\\infty "
         if category == "power series":
             result += general
-        elif category == "asymptotic series":
+        elif category == "asymptotic series":  # make sure to fix asymptotic series
             result += "\\left("+general+"\\right)"
 
-        """
-        if category == "power series":
-            result += factor+" \\sum_{k=0}^\\infty "+general
-        elif category == "asymptotic series":  # FIX THIS!
-            print general
-            result += "placeholder"
-
-
-            # result += factor+"\\left("+general+"\\right), z\\rightarrow\\infty"
-        """
     elif exp_type == "contfrac":
         start = 1  # in case the value of start isn't assigned
 
         if "even" in info:
             general = even.split("], [")
+            print "this is odd "+odd+" vs even "+even+". Fix?"
         else:
             general = general[1:-1].split("], [")
 
@@ -169,26 +190,13 @@ def convert(info):
 
         general[0] = general[0].split(", ")
 
-        for i in range(len(general)):
-            general[i] = [translate(piece) for piece in general[i]]
+        for i, pieces in enumerate(general):
+            general[i] = [translate(piece) for piece in pieces]
 
         general = general[0]
 
-        """
-        if len(general) == 1:
-            general = general[0]
-        else:
-            for i in range(len(general)):
-                general[i] = "\\frac{"+general[i][0]+"}{"+general[i][1]+"}"
-        """
-
         if "begin" in info:
             begin = begin[1:-1].split("], [")
-
-            '''
-            if len(begin) == 1:
-                begin[0] = begin[0][:-1]
-            '''
 
             for piece in begin:
                 piece = piece.split(", ")
@@ -200,7 +208,10 @@ def convert(info):
             start -= 1
 
         if "factor" in info:
-            result += factor+" "
+            if factor == "-1":
+                result += "-"
+            else:
+                result += factor+" "
 
         result += "\\CFK{m}{"+str(start)+"}{\\infty}@{"+general[0]+"}{"+general[1]+"}"
 

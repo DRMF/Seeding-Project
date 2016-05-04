@@ -56,8 +56,8 @@ def generate_categories():
                         pass
                     else:
                         text += "  \\subsection{"+qq+"}\n"
-                        for j in range(len(thing)):
-                            text += "    "+thing[j]+"\n"
+                        for j in thing:
+                            text += "    "+j+"\n"
                         text += "\n"
 
                 subsections = {"no-subsection": list()}
