@@ -631,9 +631,9 @@ def DLMF(n):
                     checkFlag=False
                     get=False
                     try:
-                        gCSV=csv.reader(open('new.Glossary.csv','rb'),delimiter=',', quotechar='\"')
-                    except:
-                        gCSV=csv.reader(open('new.Glossary.csv','rb'),delimiter=',', quotechar='\"')
+                        gCSV=csv.reader(open(sys.argv[3],'rb'),delimiter=',', quotechar='\"')
+                    except (IOError,IndexError):
+                        gCSV=csv.reader(open('../../data/new.Glossary.csv','rb'),delimiter=',', quotechar='\"')
                     preG=""
                     if symbol=="\\&":
                         ampFlag=True
