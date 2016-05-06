@@ -211,10 +211,14 @@ def DLMF(n):
             tex=open(sys.argv[1],'r')
             wiki = open(sys.argv[2], 'w')
             glossary = open(sys.argv[3],"r")
-            main=open("ZetaFunctions.mmd","r")
-            lLinks = open(sys.argv[4], 'r')
+            main=open(sys.argv[4],"r")
+            lLinks = open(sys.argv[5], 'r')
         except:
-            raise Exception("Invalid parameters - make sure to supply the TeX source file and output file.")
+            tex = open("../../data/ZE.3.tex","r")
+            wiki = open("../../data/ZE.4.xml","w")
+            glossary = open("../../data/new.Glossary.csv","r")
+            main = open("../../data/OrthogonalPolynomials.mmd","r")
+            lLinks = open("../../data/BruceLabelLinks","r")
         mainText=main.read()
         mainPrepend=""
         mainWrite=open("ZetaFunctions.mmd.new","w")
@@ -239,7 +243,7 @@ def DLMF(n):
         parse=False
         head=False
         try:
-            chapRef=[("GA",open("GA.tex",'r')),("ZE",open("ZE.3.tex",'r'))]
+            chapRef=[("GA",open("../../data/GA.tex",'r')),("ZE",open("../../data/ZE.3.tex",'r'))]
         except:
             chapRef=[("GA",open("GA.tex",'r')),("ZE",open("ZE.3.tex",'r'))]
         refLabels=[]
@@ -323,28 +327,6 @@ def DLMF(n):
         eqCounter=0
         for i in range(0,len(lines)):
             line=lines[i]
-            #line.replace("\\begin{equation}","$")
-            #line.replace("\\end{equation},"$")
-            '''if "\\begin{document}" in line:
-                          wiki.write("drmf_bof\n")
-                          parse=True
-            elif "\\end{document}" in line and parse:
-                          wiki.write("\ndrmf_eof\n")
-                          parse=False
-            elif "\\title" in line and parse:
-                          stringWrite="\'\'\'"
-                          stringWrite+=getString(line)+"\'\'\'\n"
-                          labels.append("Zeta and Related Functions")
-                          wiki.write(stringWrite\n)
-            elif "\\part" in line:
-                          if getString(line)=="BOF":
-                                     parse=False
-                          elif getString(line)=="EOF":
-                                     parse=True
-                          elif parse:
-                                     wiki.write("\n<br />\n= "+getString(line)+" =\n")
-                                     head=True
-            '''
             if "\\section" in line:
                 parse=True
                 secCounter+=1
@@ -353,13 +335,8 @@ def DLMF(n):
                 wiki.write("{{DISPLAYTITLE:"+(sections[secCounter][0])+"}}\n")
                 wiki.write("<div id=\"drmf_head\">\n")
                 wiki.write("<div id=\"alignleft\"> << [["+secLabel(sections[secCounter-1][0])+"|"+secLabel(sections[secCounter-1][0])+"]] </div>\n")
-                #wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+secLabel(sections[secCounter][0])+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
                 wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+"Sections_in_"+chapter.replace(" ","_")+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
                 wiki.write("<div id=\"alignright\"> [["+secLabel(sections[(secCounter+1)%len(sections)][0])+"|"+secLabel(sections[(secCounter+1)%len(sections)][0])+"]] >> </div>\n</div>\n\n")
-                #wiki.write("{{head|pre="+secLabel(sections[secCounter-1][0])+"|cur="+secLabel(sections[secCounter][0])+"|next="+secLabel(sections[(secCounter+1)%len(sections)][0])+"}}\n")
-                #wiki.write("{{#set:Chapter="+chapter+"}}\n")
-                #wiki.write("{{#set:Section="+str(secCounter)+"}}\n")
-                #wiki.write("{{head}}\n")
                 head=True
                 wiki.write("== "+getString(line)+" ==\n")
             elif ("\\section" in lines[(i+1)%len(lines)] or "\\end{document}" in lines[(i+1)%len(lines)]) and parse:
@@ -368,8 +345,6 @@ def DLMF(n):
                 #wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+secLabel(sections[secCounter][0])+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
                 wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+"Sections_in_"+chapter.replace(" ","_")+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
                 wiki.write("<div id=\"alignright\"> [["+secLabel(sections[(secCounter+1)%len(sections)][0])+"|"+secLabel(sections[(secCounter+1)%len(sections)][0])+"]] >> </div>\n</div>\n\n")
-                #wiki.write("{{foot|pre="+secLabel(sections[secCounter-1][0])+"|cur="+secLabel(sections[secCounter][0])+"|next="+secLabel(sections[(secCounter+1)%len(sections)][0])+"}}\n")
-                #wiki.write("{{foot}}\n")
                 wiki.write("drmf_eof\n")
                 sections[secCounter].append(eqCounter)
                 eqCounter=0
