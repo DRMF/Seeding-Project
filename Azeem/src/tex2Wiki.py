@@ -107,7 +107,6 @@ def getEqP(line):  # Gets all data within proofs
         if count >= 0 and per != 0:
             per += 1
             if c != " " and c != "%":
-                # if c!="%":
                 per = 0
         if c == "{" and per == 0:
             if count > 0:
