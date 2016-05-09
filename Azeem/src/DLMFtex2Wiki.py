@@ -135,7 +135,7 @@ def getSym(line): #Gets all symbols on a line for symbols list
             if c=="{" or c=="[":
                 cC+=1
             if c!="}" and c!="]":
-                if argFlag or c.isalpha():
+                if c.isalpha():
                     symbol+=c
                 else:
                     symFlag=False
