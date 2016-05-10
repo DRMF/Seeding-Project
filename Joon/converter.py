@@ -260,8 +260,8 @@ def main():
 
     print text
 
-    with open("testing/test.tex", "w") as f:
-        text = open("testing/primer").read() + text + "\\end{document}"
+    with open("tests/test.tex", "w") as f:
+        text = open("tests/primer").read() + text + "\\end{document}"
         f.write(text)
 
 if __name__ == '__main__':
