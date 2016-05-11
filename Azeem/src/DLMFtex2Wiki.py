@@ -8,7 +8,7 @@ def isnumber(char): #Function to check if char is a number (assuming 1 character
     return char[0] in "0123456789"
 def is_number(char):
     try:
-        float(char)
+        "".join(["0"+str(float(char)) if float(char) < 10 else float(char) for i in range(0,1)])
         return True
     except ValueError:
         return False
