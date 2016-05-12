@@ -736,7 +736,6 @@ def DLMF(n):
                 wiki.write("<span class=\"plainlinks\">[HTTP://DLMF.NIST.GOV/"+
                            section+"#"+equation+" Equation ("+equation[1:]+"), "
                 "Section "+section+"]</span> of [[Bibliography#DLMF|'''DLMF''']].\n\n")
-                #wiki.write("<span class=\"plainlinks\">[http://homepage.tudelft.nl/11r49/askey/contents.html Equation in Section "+section+ "]</span> of [[Bibliography#KLS|'''KLS''']].\n\n")#Where should it link to?
                 wiki.write("== URL links ==\n\nWe ask users to provide relevant URL links in this space.\n\n")
                 if eqCounter<endNum:
                     wiki.write("<br /><div id=\"drmf_foot\">\n")
