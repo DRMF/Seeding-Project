@@ -329,7 +329,7 @@ def DLMF(n):
                 wiki.write("<div id=\"drmf_foot\">\n")
                 wiki.write("<div id=\"alignleft\"> << [["+secLabel(sections[secCounter-1][0])+"|"+secLabel(sections[secCounter-1][0])+"]] </div>\n")
                 wiki.write("<div id=\"aligncenter\"> [[Zeta_and_Related_Functions#"+"Sections_in_"
-                                                                                    ""+chapter.replace(" ","_")+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
+                ""+chapter.replace(" ","_")+"|"+secLabel(sections[secCounter][0])+"]] </div>\n")
                 wiki.write("<div id=\"alignright\"> [["+secLabel(sections[(secCounter+1)%len(sections)][0])+
                            "|"+secLabel(sections[(secCounter+1)%len(sections)][0])+"]] >> </div>\n</div>\n\n")
                 wiki.write("drmf_eof\n")
@@ -733,8 +733,9 @@ def DLMF(n):
                     equation=equation[0:equation.find(":")]
                 if is_number(section) == False:
                     return eqCounter
-                wiki.write("<span class=\"plainlinks\">[HTTP://DLMF.NIST.GOV/"+section+"#"+equation+" Equation ("+equation[1:]+"), "
-                                                                                                                               "Section "+section+"]</span> of [[Bibliography#DLMF|'''DLMF''']].\n\n")
+                wiki.write("<span class=\"plainlinks\">[HTTP://DLMF.NIST.GOV/"+
+                           section+"#"+equation+" Equation ("+equation[1:]+"), "
+                "Section "+section+"]</span> of [[Bibliography#DLMF|'''DLMF''']].\n\n")
                 #wiki.write("<span class=\"plainlinks\">[http://homepage.tudelft.nl/11r49/askey/contents.html Equation in Section "+section+ "]</span> of [[Bibliography#KLS|'''KLS''']].\n\n")#Where should it link to?
                 wiki.write("== URL links ==\n\nWe ask users to provide relevant URL links in this space.\n\n")
                 if eqCounter<endNum:
@@ -752,7 +753,7 @@ def DLMF(n):
                     #else:
                     if True:
                         wiki.write("<div id=\"alignright\"> [["+secLabel(labels[(eqCounter+1)%
-                                                                                (endNum+1)]).replace(" ","_")+"|"+secLabel(labels[(eqCounter+1)%(endNum+1)])+"]] >> </div>\n")
+                        (endNum+1)]).replace(" ","_")+"|"+secLabel(labels[(eqCounter+1)%(endNum+1)])+"]] >> </div>\n")
                     wiki.write("</div>\n\ndrmf_eof\n")
                 else: #FOR EXTRA EQUATIONS
                     wiki.write("<br /><div id=\"drmf_foot\">\n")
@@ -917,7 +918,8 @@ def DLMF(n):
                     note=False
                     if "\\emph" in noteLine:
                         noteLine=noteLine[0:noteLine.find("\\emph{")]+"\'\'"+noteLine[noteLine.find("\\emph{")+len("\\emph{"):
-                        noteLine.find("}",noteLine.find("\\emph{")+len("\\emph{"))]+"\'\'"+noteLine[noteLine.find("}",noteLine.find("\\emph{")+len("\\emph{"))+1:]
+                        noteLine.find("}",noteLine.find("\\emph{")+len("\\emph{"))]+"\'\'"+\
+                        noteLine[noteLine.find("}",noteLine.find("\\emph{")+len("\\emph{"))+1:]
                     comToWrite=comToWrite+"<div align=\"left\">"+getEq(noteLine)+"</div><br />\n"
 
             if constraint and parse:
