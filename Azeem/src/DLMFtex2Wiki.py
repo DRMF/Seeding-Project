@@ -81,7 +81,7 @@ def getEq(line): #Gets all data within constraints,substitutions
             stringWrite+=c #write the character
 
     return (stringWrite.rstrip().lstrip())
-def getEqP(line,Flag): #Gets all data within proofs
+def getEqP(line): #Gets all data within proofs
     per=1
     stringWrite=""
     fEq=False
@@ -845,7 +845,7 @@ def DLMF(n):
                 if "\\end{equation}" in lines[i+1]:
                     proof=False
                     #symLine+=line.strip("\n")
-                    wiki.write(comToWrite+getEqP(proofLine,False)+"</div>\n<br />\n")
+                    wiki.write(comToWrite+getEqP(proofLine)+"</div>\n<br />\n")
                     comToWrite=""
                     symbols=symbols+getSym(symLine)
                     symLine=""
@@ -891,7 +891,7 @@ def DLMF(n):
                 if "\\end{equation}" in lines[i+1]:
                     proof=False
                     #symLine+=line.strip("\n")
-                    wiki.write(comToWrite+getEqP(proofLine,False).rstrip("\n")+"</div>\n<br />\n")
+                    wiki.write(comToWrite+getEqP(proofLine).rstrip("\n")+"</div>\n<br />\n")
                     comToWrite=""
                     symbols=symbols+getSym(symLine)
                     symLine=""
