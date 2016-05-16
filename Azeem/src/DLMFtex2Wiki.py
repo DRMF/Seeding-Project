@@ -12,6 +12,33 @@ def is_number(char):
     except ValueError:
         return False
 
+def modLabel(label):
+    #label.replace("Formula:KLS:","KLS;")
+    isNumer=False
+    newlabel=""
+    num=""
+    for i in range(0,len(label)):
+        if isNumer and not isnumber(label[i]):
+            if len(num)>1:
+                newlabel+=num
+                isNumer=False
+                num=""
+            else:
+                newlabel+="0"+str(num)
+                num=""
+                isNumer=False
+        if isnumber(label[i]):
+            isNumer=True
+            num+=str(label[i])
+        else:
+            isNumer=False
+            newlabel+=label[i]
+    if len(num)>1:
+        newlabel+=num
+    elif len(num)==1:
+        newlabel+="0"+num
+    return(newlabel)
+
 def DLMF(n):
     for iterations in range(0,1):
         try:
