@@ -18,7 +18,7 @@ def modLabel(label):
     newlabel=""
     num=""
     for i in range(0,len(label)):
-        if isNumer and not isnumber(label[i]):
+        if isNumer and not is_number(label[i]):
             if len(num)>1:
                 newlabel+=num
                 isNumer=False
@@ -27,7 +27,7 @@ def modLabel(label):
                 newlabel+="0"+str(num)
                 num=""
                 isNumer=False
-        if isnumber(label[i]):
+        if is_number(label[i]):
             isNumer=True
             num+=str(label[i])
         else:
