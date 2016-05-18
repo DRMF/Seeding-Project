@@ -19,16 +19,8 @@ def generate_categories():
     text = ""
     subsections = {"no-subsection": list()}
 
-    for i, info in enumerate(dirs):
+    for info in dirs:
         print info
-
-        """
-        information in 'info':
-        0 : current directory
-        1 : subdirectories
-        2 : files
-
-        """
 
         directory = info[0].split("/")
 
@@ -36,18 +28,18 @@ def generate_categories():
             if text:
                 for subsection in subsections:
                     text += "    \\subsection{"+subsection+"}\n"
-                    for file in subsections[subsection]:
-                        text += "      "+file+"\n"
+                    for file_name in subsections[subsection]:
+                        text += "      "+file_name+"\n"
                     text += "\n"
 
             text += "  \\section{"+translate[directory[depth]]+"}\n"
             subsections = {"no-subsection": list()}
 
-        elif len(directory) == depth+2:
-            if translate[directory[depth+1]] not in subsections:
-                try: subsections.pop("no-subsection")
-                except KeyError: pass
-                subsections[translate[directory[depth+1]]] = list()
+        elif len(directory) == depth+2 and translate[directory[depth+1]] not in subsections:
+            if "no-subsection" in subsections:
+                subsections.pop("no-subsection")
+
+            subsections[translate[directory[depth+1]]] = list()
 
     print text
 
