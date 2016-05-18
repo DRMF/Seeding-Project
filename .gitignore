@@ -249,3 +249,16 @@ sympy-plots-for-*.tex/
 *.bak
 *.sav
 
+# eCF
+*.sty
+Glossary.csv 
+ZE.*.*
+ak 
+ak.*
+macros.txt
+newIdentities.*
+newIdentitiesTest.*
+test.*
+x.log
+mathematica_to_latex_ section.py
+mathematica_to_latex_4.py
