@@ -12,7 +12,6 @@ def is_number(char):
     except ValueError:
         return False
 
-<<<<<<< HEAD
 def modLabel(label):
     #label.replace("Formula:KLS:","KLS;")
     isNumer=False
@@ -39,9 +38,7 @@ def modLabel(label):
     elif len(num)==1:
         newlabel+="0"+num
     return(newlabel)
- 
-=======
->>>>>>> parent of 7e266a4... Add back modlabel to DLMFtex2Wiki
+
 def DLMF(n):
     for iterations in range(0,1):
         try:
