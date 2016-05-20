@@ -5,6 +5,8 @@ import sys #imported for getting args
 import os #imported for copying file
 import tex2Wiki as KLS
  #Change Accordingly based on project directory.
+
+wiki = ''
 def is_number(char):
     try:
         "".join(["0"+str(float(char)) if float(char) < 10 else float(char)])
@@ -44,7 +46,7 @@ def DLMF(n):
     for iterations in range(0,1):
         try:
             tex=open(sys.argv[1],'r')
-            wiki = open(sys.argv[2], 'w')
+            #wiki = open(sys.argv[2], 'w')
             glossary = open(sys.argv[3],"r")
             main=open(sys.argv[4],"r")
             lLinks = open(sys.argv[5], 'r')
