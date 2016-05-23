@@ -568,7 +568,7 @@ def DLMF(n):
                 KLS.append_text("\n<br />\n")
 
                 KLS.append_text("\n== Bibliography==\n\n")#should there be a space between bibliography and ==?
-                r=KLS.unmodlabel(labels[eqCounter])
+                r=KLS.unmodLabel(labels[eqCounter])
                 q=r.find("DLMF:")+5
                 p=r.find(":",q)
                 section=r[q:p]
