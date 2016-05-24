@@ -9,7 +9,7 @@ import tex2Wiki as KLS
 wiki = ''
 def is_number(char):
     try:
-        "".join(["0"+str(float(char)) if float(char) < 10 else float(char)])
+        "".join(["0"+str(float(char)) if float(char) < 10 else str(float(char))])
         return True
     except ValueError:
         return False
