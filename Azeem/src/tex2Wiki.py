@@ -6,12 +6,20 @@ from shutil import copyfile
 import xml.etree.ElementTree as ET
 import datetime
 
-wiki = ''
 next_formula_number = 0
 lLink = ''
 ET.register_namespace('', 'http://www.mediawiki.org/xml/export-0.10/')
 root = ET.Element('{http://www.mediawiki.org/xml/export-0.10/}mediawiki')
-
+page = ET.SubElement(root, 'page')
+title = ET.SubElement(page, 'title')
+revision = ET.SubElement(page, 'revision')
+timestamp = ET.SubElement(revision, 'timestamp')
+timestamp.text = str(datetime.datetime.utcnow())
+contributor = ET.SubElement(revision, 'contributor')
+username = ET.SubElement(contributor, 'username')
+username.text = 'SeedBot'
+wiki = ET.SubElement(revision, 'text')
+wiki.text = ''
 
 def isnumber(char):  # Function to check if char is a number (assuming 1 character)
     return char[0] in "0123456789"
@@ -246,7 +254,6 @@ def append_text(text):
     global wiki
     wiki.text = wiki.text + text
 
-
 def append_revision(param):
     global wiki
     page = ET.SubElement(root, 'page')
@@ -262,6 +269,7 @@ def append_revision(param):
     wiki.text = ''
 
 
+
 def writeout(ofname):
     tree = ET.ElementTree(root)
     tree.write(ofname, xml_declaration=True, encoding='utf-8', method='xml')
@@ -273,7 +281,7 @@ def main():
         ofname = "../../data/ZE.4.xml"
         lname = "../../data/BruceLabelLinks"
         glossary =  "../../data/new.Glossary.csv"
-        mmd =  "../../data/OrthogonalPolynomials.mmd"
+        mmd =  "../../data/OrthogonalPolynomials.xml"
 
     else:
         fname = sys.argv[1]
@@ -298,7 +306,7 @@ def readin(ofname,glossary,mmd):
         main_file = open(mmd, "r")
         mainText = main_file.read()
         mainPrepend = ""
-        mainWrite = open("OrthogonalPolynomials.mmd.new", "w")
+        mainWrite = open("OrthogonalPolynomials.xml.new", "w")
         glossary = open('new.Glossary.csv', 'rb')
         math = False
         constraint = False
@@ -342,7 +350,7 @@ def readin(ofname,glossary,mmd):
                 mainWrite.write(mainText)
                 mainWrite.close()
                 main_file.close()
-                copyfile(mmd, 'OrthogonalPolynomials.mmd.new')
+                copyfile(mmd, 'OrthogonalPolynomials.xml.new')
                 parse = False
             elif "\\title" in line and parse:
                 stringWrite = "\'\'\'"
