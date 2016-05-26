@@ -43,8 +43,8 @@ def generate_categories():
 
     print text
 
-    with open("tests/test.tex", "w") as f:
-        text = open("tests/primers/primer").read() + text + "\\end{document}"
+    with open("output/test.tex", "w") as f:
+        text = open("output/primers/primer").read() + text + "\\end{document}"
         f.write(text)
 
 def main():
