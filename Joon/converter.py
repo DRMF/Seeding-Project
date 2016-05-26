@@ -2,30 +2,35 @@
 
 import sys
 
-filename = "mpl/bessel.mpl"
+filename = "functions/CH/confluentlimit/confluentlimit.mpl"
+
 
 # Declarations
 def make_list(name):
     return list(line.split(" || ") for line in open(name).read().split("\n")
                 if line != "" and "%" not in line)
 
+
 functions = dict(tuple(line.split(" || ", 1)) for line in open("keys/functions").read().split("\n")
                  if line != "" and "%" not in line)
-spacing = list((line, " "+line+" ") for line in open("keys/spacing").read().split("\n")
+spacing = list((line, " " + line + " ") for line in open("keys/spacing").read().split("\n")
                if line != "" and "%" not in line)
 symbols = make_list("keys/symbols")
 special = make_list("keys/special")
 parentheses = [["(", "\\left("], [")", "\\right)"]]
 numbers = "0123456789"
 
+
 def format_text(string, li):
     for key in li:
         string = string.replace(key[0], key[1])
     return string
 
+
 def usage():
     print "Usage: python converter.py"
     return sys.exit(0)
+
 
 def parse_brackets(exp):
     """
@@ -34,12 +39,14 @@ def parse_brackets(exp):
 
     return [[translate(p) for p in piece.split(", ")] for piece in exp[1:-1].split("], [")]
 
+
 def make_frac(n, d):
     """
     Generate a LaTeX frac from numerator and denominator
     """
 
-    return "\\frac{"+n+"}{"+d+"}"
+    return "\\frac{" + n + "}{" + d + "}"
+
 
 def basic_translate(exp):
     """
@@ -55,25 +62,25 @@ def basic_translate(exp):
                 exp[i] = "i"
 
             elif exp[i] == "^" and order == 0:
-                power = exp.pop(i+1)
+                power = exp.pop(i + 1)
                 if power[-1] == ")":
                     power = ''.join(power[1:-1])
-                exp[i-1] += "^{"+power+"}"
+                exp[i - 1] += "^{" + power + "}"
                 modified = True
 
             elif exp[i] == "*" and order == 1:
                 # rules for nicer spacing
-                if exp[i-1][-1] not in "})" and exp[i+1][0] != "\\"\
-                        or exp[i-1][-1] in numbers and exp[i+1] in numbers:
-                    exp[i-1] += " "
-                exp[i-1] += exp.pop(i+1)
+                if exp[i - 1][-1] not in "})" and exp[i + 1][0] != "\\" \
+                        or exp[i - 1][-1] in numbers and exp[i + 1] in numbers:
+                    exp[i - 1] += " "
+                exp[i - 1] += exp.pop(i + 1)
                 modified = True
 
             elif exp[i] == "/" and order == 1:
-                for index in [i-1, i+1]:
+                for index in [i - 1, i + 1]:
                     if exp[index][0] == "(" and exp[index][-1] == ")":
                         exp[index] = exp[index][1:-1]
-                exp[i-1] = "\\frac{"+exp[i-1]+"}{"+exp.pop(i+1)+"}"
+                exp[i - 1] = "\\frac{" + exp[i - 1] + "}{" + exp.pop(i + 1) + "}"
                 modified = True
 
             if modified:
@@ -85,6 +92,16 @@ def basic_translate(exp):
 
     return ''.join(exp)
 
+def parse_arguments(pieces):
+    pieces = pieces[1:-1].split(",")
+    for i, piece in enumerate(pieces):
+        if piece[0] == "[" and piece[-1] != "]":
+            pieces[i] = (pieces[i] + "," + pieces.pop(i + 1))[1:-1]
+        elif piece[0] == "[" and piece[-1] == "]":
+            pieces[i] = pieces[i][1:-1]
+
+    return pieces
+
 def translate(exp):
     """
     Translate a segment of Maple to LaTeX, including functions
@@ -92,30 +109,30 @@ def translate(exp):
     exp = exp.strip()
 
     parens, i = list(), 0
-    exp = format_text(exp, symbols+spacing).split()
+    exp = format_text(exp, symbols + spacing).split()
 
     while i < len(exp):
         if exp[i] == "(":
-            if exp[i-1] in functions:
-                parens.append([i, functions[exp[i-1]]])
+            if exp[i - 1] in functions:
+                parens.append([i, functions[exp[i - 1]]])
             else:
                 parens.append([i])
 
         elif exp[i] == ")":
             info = parens.pop()
             l = info[0]
-            piece = basic_translate(exp[l:i+1])
+            piece = basic_translate(exp[l:i + 1])
 
             if len(info) == 2:
                 l -= 1
                 func = info[1].split(" || ")
-                piece = piece[1:-1].split(",")
+                piece = parse_arguments(piece)
                 result = [func[-1]]
                 for c in range(len(piece))[::-1]:
                     result += [piece[c], func[c]]
                 piece = ''.join(result[::-1])
 
-            exp = exp[0:l] + [piece] + exp[i+1:]
+            exp = exp[0:l] + [piece] + exp[i + 1:]
             i = l
 
         i += 1
@@ -128,67 +145,44 @@ def convert(info):
     """
 
     # parameters guaranteed to be present in Maple code
-    exp_type, category, parameters, lhs, label, booklabel, constraints = "", "", "", "", "", "", ""
+    exp_type, category, lhs, booklabel, constraints = "", "", "", "", ""
     # conditional parameters
     general, factor, begin, even, odd, front = "", "", "", "", "", ""
 
     for param in info:  # initializes all variables used
-        if param == 'exp_type':
-            exp_type = info['exp_type']
-
-        elif param == 'category':
-            category = info['category']
-
-        elif param == 'parameters':
-            parameters = info['parameters']
-
-        elif param == 'lhs':
+        if param == 'lhs':
             lhs = translate(info['lhs'])
-
-        elif param == 'label':
-            label = info['label']
-
-        elif param == 'booklabel':
-            booklabel = info['booklabel']
 
         elif param == 'constraints':
             constraints = translate(info['constraints'])
 
-        elif param == 'general':
-            general = info['general']
-
         elif param == 'factor':
             factor = translate(info['factor'])
-
-        elif param == 'begin':
-            begin = info['begin']
-
-        elif param == 'even':
-            even = info['even']
-
-        elif param == 'odd':
-            odd = info['odd']
 
         elif param == 'front':
             front = translate(info['front'])
 
-    result = "\\begin{equation*}\\tag{"+booklabel+"}\n  "+lhs+"\n  = "
+        else:
+            exec param + ' = info["' + param + '"]'
+
+    result = "\\begin{equation*}\\tag{" + booklabel + "}\n  " + lhs + "\n  = "
 
     # translates the Maple information (with spacing)
     if exp_type == "series":
         general = translate(general)
 
-        result += factor+" \\sum_{k=0}^\\infty "
+        result += factor + " \\sum_{k=0}^\\infty "
         if category == "power series":
             result += general
         elif category == "asymptotic series":  # make sure to fix asymptotic series
-            result += "\\left("+general+"\\right)"
+            result += "\\left(" + general + "\\right)"
 
     elif exp_type == "contfrac":
         start = 1  # in case the value of start isn't assigned
 
         if "even" in info:
             general = parse_brackets(even)
+            print "Odd case: " + str(parse_brackets(odd))
         else:
             general = parse_brackets(general)
 
@@ -199,24 +193,24 @@ def convert(info):
             begin = parse_brackets(begin)
 
             for piece in begin:
-                result += make_frac(piece[0], piece[1])+"+"
+                result += make_frac(piece[0], piece[1]) + "+"
                 start += 1
 
         elif "front" in info:
-            result += front+"+"
+            result += front + "+"
             start -= 1
 
         if "factor" in info:
             if factor == "-1":
                 result += "-"
             else:
-                result += factor+" "
+                result += factor + " "
 
-        result += "\\CFK{m}{"+str(start)+"}{\\infty}@{"+general[0]+"}{"+general[1]+"}"
+        result += "\\CFK{m}{" + str(start) + "}{\\infty}@{" + general[0] + "}{" + general[1] + "}"
 
     # adds metadata
-    result += "\n  %  \\constraint{$"+constraints+"$}"  # fix constraints
-    result += "\n  %  \\category{"+category+"}"
+    result += "\n  %  \\constraint{$" + constraints + "$}"  # fix constraints
+    result += "\n  %  \\category{" + category + "}"
     result += "\n\\end{equation*}"
 
     return format_text(result, special)
@@ -250,13 +244,15 @@ def main():
     if len(sys.argv) != 1:
         usage()
 
-    contents = open(filename).read().split("\n\n")
+    contents = open(filename).read()
+    contents = '):\n\ncreate('.join(contents.replace("\n\n", "\n").split("):\ncreate(")).split("\n\n")
+
     text = ""
 
     for expression in contents:
         expression = parse(expression)
 
-        text += convert(expression)+"\n\n"
+        text += convert(expression) + "\n\n"
 
     print text
 
