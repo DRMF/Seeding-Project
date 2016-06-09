@@ -35,7 +35,7 @@ def main():
         print m_file.convert_formulae()
 
     with open("output/test.tex", "w") as f:
-        text = open("output/primers/primer").read() + text + "\\end{document}"
+        text = open("output/primer").read() + text + "\\end{document}"
         f.write(text)
 
 if __name__ == "__main__":

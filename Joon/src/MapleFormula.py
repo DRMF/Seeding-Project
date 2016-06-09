@@ -11,13 +11,12 @@ class MapleFormula(object):
     def __init__(self, inp):
         inp = inp.split("\n")
 
-        print inp
-
         # creates a dictionary called "fields", containing all the Maple fields
         self.fields = dict()
         for i, line in enumerate(inp):
             if i == 0:
                 self.fields["type"] = line.split("'")[1]
+
             elif " = " in line:
                 line = line.split(" = ")
                 line[0] = line[0].strip()
@@ -32,9 +31,6 @@ class MapleFormula(object):
                 elif line[0] in ["function", "lhs", "factor", "front",
                                  "even", "odd"]:
                     line[1] = line[1][:-1].strip()
-
-                else:
-                    pass # unnecessary data
 
                 self.fields[line[0]] = line[1]
 
