@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os
 
+INDENT = "    "
+
 names = ["BS", "CH", "CN", "EF", "ER", "EX", "GA", "HY", "QH", "SM"]
 
 translate = dict(tuple(line.split(" : ")) for line in open("keys/section_names").read().split("\n")
