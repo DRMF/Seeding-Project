@@ -7,7 +7,6 @@ SYMBOLS = list(line.split(" || ") for line in open("keys/symbols").read().split(
                if line != "" and "%" not in line)
 PARENTHESES = [["(", "\\left("], [")", "\\right)"]]
 SPACING = list((char, " " + char + " ") for char in ["(", ")", "+", "-", "*", "/", "^", "<", ">", ","])
-SPECIAL = [['+\\left(-', '-\\left('], ['+\\frac{-', '-\\frac{'], ['+-', '-'], ['--', '+']]
 NUMBERS = "0123456789"
 
 def replace_strings(string, li):

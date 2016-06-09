@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
-from TranslationMethods import *
+from TranslationMethods import parse_brackets
+from TranslationMethods import make_frac
+from TranslationMethods import replace_strings
+from TranslationMethods import translate
+
+SPECIAL = [['+\\left(-', '-\\left('], ['+\\frac{-', '-\\frac{'], ['+-', '-'], ['--', '+']]
 
 class MapleFormula(object):
     def __init__(self, inp):
