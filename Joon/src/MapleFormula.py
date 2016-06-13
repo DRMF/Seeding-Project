@@ -87,8 +87,6 @@ class MapleFormula(object):
         elif self.eq_type == "contfrac":
             start = 1  # in case the value of start isn't assigned
 
-            print self.fields
-
             if "begin" in self.fields:
                 for piece in self.begin:
                     equation += make_frac(piece[0], piece[1]) + "+"
