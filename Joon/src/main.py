@@ -21,7 +21,8 @@ class MapleFile(object):
 
 def main():
     files = ["functions/BS/bessel/bessel.mpl", "functions/BS/modbessel/modbessel.mpl",
-             "functions/CH/confluent/confluent.mpl", "functions/CH/confluent/confluent.mpl"]
+             "functions/CH/confluent/confluent.mpl", "functions/CH/confluent/confluent.mpl",
+             "functions/CH/confluentlimit/confluentlimit.mpl"]
 
     text = ""
 
