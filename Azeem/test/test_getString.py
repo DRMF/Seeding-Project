@@ -5,7 +5,7 @@ from tex2Wiki import setup_label_links
 class TestGetString(TestCase):
 
     def test_getString(self):
-        self.assertEqual('eq:ZE.INT.EL6', getString('eq:ZE.INT.\nEL6'))
-        self.assertEqual('eq:ZE.HZE.SP5', getString(' eq\n:ZE.HZE.SP5'))
-        self.assertEqual('eq:GA.FR.Rf.1', getString(' eq\n:GA.F\nR.Rf.1'))
-        self.assertEqual('eq:ZE.HZE.INT1', getString(' eq:ZE.HZE.INT\n1'))
+        self.assertEqual('Mathematical Applications', getString('\\section{Mathematical Applications}\\label{sec:ZE.APPL}%ZE.16\n'))
+        self.assertEqual('eq:ZE.INT.EL1',getString('\\eqref{eq:ZE.INT.EL1}'))
+        self.assertEqual('eq:ZE.INT.EL3',getString('\\eqref{eq:ZE.INT.EL3}\n'))
+        self.assertEqual('eq:ZE.INT.EL5', getString(' \n \\eqref{eq:ZE.INT.EL5}\n '))
