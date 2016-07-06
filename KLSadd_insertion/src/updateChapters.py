@@ -62,6 +62,7 @@ irrelevant = ["Relations","Functions","Transform","In","For","To","Is","And","Of
 
 check = []
 check2 = []
+check3 = []
 
 comms = "" #holds the ACTUAL STRINGS of the commands
 #2/18/16 this method addresses the goal of hardcoding in the necessary packages to let the chapter files run as pdf's.
@@ -97,24 +98,14 @@ def HyperGeoFix(kls, chap):
             kHyperSub.append(t)#append the whole paragraph, pray every paragraph ends with a % comment
             kHyperHeader.append(temp)#append the name of subsection
     kHyperHeader[8] = "Discrete $q$-Hermite~II"
-    print(kHyperHeader)
-    print(len(kHyperHeader))
-    print(kHyperSub)
-    print(len(kHyperSub))
-    print(klsaddparas)
     kHypIndex = 0
     offset = 0
     if len(check) == 0:
         tempref = ref9III
-        global check
-        print(len(check))
-        print(check)
         check.append("Words")
     else:
         tempref = ref14III
         offset = 4
-        print("baguette")
-    print(tempref)
     for d in range(0, len(tempref)):  # check every section and subsection line
         i = tempref[d]
         line = str(chap[i])
@@ -131,13 +122,15 @@ def HyperGeoFix(kls, chap):
                 try:
                     chap[tempref[d + 1] - 2] += "\paragraph{\\bf KLS Addendum: Hypergeometric Representation}"
                     chap[tempref[d + 1] - 2] += kHyperSub[kHypIndex + offset]
-                    print(kHyperSub[kHypIndex + offset])
                     #print(chap[tempref[d + 1] - 2])
                     kHypIndex+=1
-                    print(kHypIndex)
                 except IndexError:
-                    print("QED")
+                    print("Warning! Code has encountered some sort of error involving section identification for 'Hypergeometric Representation'. Problems may occur.")
 
+    #print(kHyperHeader)
+    #print(hyperHeaders)
+    #print(kHyperSub)
+    #print(hyperSubs)
 def SpecialValue(kls, chap):
     canAdd = False
     # keep track of sections and subsections from chap
@@ -163,8 +156,6 @@ def SpecialValue(kls, chap):
             t = ''.join(kls[index: klsaddparas[svklsloc]])
             svkHyperSub.append(t)  # append the whole paragraph, pray every paragraph ends with a % comment
             svkHyperHeader.append(temp)  # append the name of subsection
-    print("svk")
-    print(svkHyperHeader)
     svkHypIndex = 0
     offset = 0
     if len(check2) == 0:
@@ -183,11 +174,72 @@ def SpecialValue(kls, chap):
                 temp = line[9:line.find("}", 7)]
         if "hypergeometric representation" in line.lower():
             svhyperSubs.append([tempref[d + 1]])  # appends the index for the line before following subsection
-            svhyperHeaders.append(temp)  # appends the name of the section the hypergeo subsection is in so we can compare
+            svhyperHeaders.append(temp)  #appends the name of the section the hypergeo subsection is in so we can compare
             if temp in svkHyperHeader:
                 chap[tempref[d + 1] - 2] += "\paragraph{\\bf KLS Addendum: Special Value}"
                 chap[tempref[d + 1] - 2] += svkHyperSub[svkHypIndex + offset]
                 svkHypIndex += 1
+
+def LimRelFix(kls, chap):
+    canAdd = False
+    lrhyperHeaders = []
+    lrhyperSubs = []
+    index = 0
+
+    lrkHyperHeader = []
+    lrkHyperSub = []
+    index = 0
+    for i in kls:
+        index +=1
+        line = str(i)
+        if "\\subsection" in line:
+            temp = line[line.find(" ", 12)+1: line.find("}", 12)]
+        if "limit relation" in line.lower():
+            for i in klsaddparas:
+                if index < i:
+                    klsloc = klsaddparas.index(i)
+                    break
+            t = ''.join(kls[index: klsaddparas[klsloc]])
+            lrkHyperSub.append(t)#append the whole paragraph, pray every paragraph ends with a % comment
+            lrkHyperHeader.append(temp)#append the name of subsection
+    print(lrkHyperHeader)
+    lrkHyperHeader[0] = "Pseudo Jacobi"
+    print(lrkHyperHeader)
+    print(lrkHyperSub)
+    lrkHypIndex = 0
+    offset = 0
+    if len(check3) == 0:
+        tempref = ref9III
+        check3.append("Words")
+    else:
+        tempref = ref14III
+        offset = 1
+        print("baguetteII")
+    print(tempref)
+    for d in range(0, len(tempref)):  # check every section and subsection line
+        i = tempref[d]
+        line = str(chap[i])
+        if "\\section{" in line or "\subsection{" in line:
+            if "\\subsection{" in line:
+                temp = line[12:line.find("}", 7)]
+            else:
+                temp = line[9:line.find("}", 7)]
+        if "limit relation" in line.lower():
+            lrhyperSubs.append([tempref[d + 1]])  # appends the index for the line before following subsection
+            lrhyperHeaders.append(temp)  # appends the name of the section the hypergeo subsection is in so we can compare
+
+            if temp in lrkHyperHeader:
+                try:
+                    chap[tempref[d + 1] - 2] += "\paragraph{\\bf KLS Addendum: Limit Relation(s)}"
+                    chap[tempref[d + 1] - 2] += lrkHyperSub[lrkHypIndex + offset]
+                    print(lrkHyperSub[lrkHypIndex + offset])
+                    #print(chap[tempref[d + 1] - 2])
+                    lrkHypIndex+=1
+                    print(lrkHypIndex)
+                except IndexError:
+                    print("Warning! Code has encountered some sort of error involving section identification for 'Limit Relations'. Problems may occur.")
+    print(lrhyperHeaders)
+    print(lrhyperSubs)
 
 def prepareForPDF(chap):
     footmiscIndex = 0
@@ -441,7 +493,7 @@ def fixChapter(chap, references, p, kls,refII,refIII,specref,klsaddparas,sectors
     #print(len(check))
     #check = []
 
-    #LimRelFix(kls, chap)
+    LimRelFix(kls, chap)
 
     referencePlacer(chap, references, p, kls, refII,refIII,specref,klsaddparas)
     #referencePlacerII(chap, references, p, kls, refII, refIII, specref, klsaddparas,sectorskls,sectorschap,insertindices,insertloc)
@@ -544,22 +596,17 @@ with open("KLSadd(3).tex", "r") as add:
     #two variables for the references lists one for chapter 9 one for chapter 14
     chapticker = 0
     references9 = findReferences(entire9)
-    print(ref14III)
-    print("memes")
     chapticker += 1
     references14 = findReferences(entire14)
     ref14III.insert(88, 1217)
     ref14III.insert(244, 3053)
     ref14III.insert(198, 2554)
-    print(ref14III)
-    print("memes")
     #call the fixChapter method to get a list with the addendum paragraphs added in
     chapticker2 = 0
     str9 = ''.join(fixChapter(entire9, references9, paras, addendum,ref9II,ref9III,specref9,klsaddparas,sectorskls,sectorschap,insertindices,insertloc))
     chapticker2 += 1
     str14 = ''.join(fixChapter(entire14, references14, paras, addendum,ref14II,ref14III,specref14,klsaddparas,sectorskls,sectorschap,insertindices,insertloc))
-    #print(insertindices)
-    #print(insertloc)
+
 """
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 If you are writing something that will make a change to the chapter files, write it BEFORE this line, this part
@@ -575,6 +622,4 @@ with open("updated9.tex","w") as temp9:
 
 with open("updated14.tex", "w") as temp14:
     temp14.write(str14)
-print(ref14III)
-print(ref14III[87])
 
