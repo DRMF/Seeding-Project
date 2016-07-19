@@ -1,4 +1,7 @@
-math_start = {"\\[": "\\]",
+"""
+Dictionary containing math mode delimiters and their respective endpoints.
+"""
+mathStart = {"\\[": "\\]",
              "\\(": "\\)",
              "$$": "$$",
              "$": "$",
@@ -9,9 +12,13 @@ math_start = {"\\[": "\\]",
              "\\begin{multline}": "\\end{multline}",
              "\\begin{multline*}": "\\end{multline*}"}
 
-math_end = ["\\hbox{",
+"""
+List of delimiters that exit math mode.
+"""
+mathEnd = ["\\hbox{",
            "\\mbox{",
-           "\\text{"]
+           "\\text{",
+           "\\label{"]
 
 
 def find_first(string, delim, start=0):
@@ -41,7 +48,7 @@ def first_delim(string, enter=True):
     :return: The delimiter that first appears in the string.
     """
     minm = ["\\hbox{", "\\]"][enter]
-    for delim in [math_end, math_start][enter]:
+    for delim in [mathEnd, mathStart][enter]:
         i = find_first(string, delim)
         if i != -1 and i < find_first(string, minm) or minm not in string:
             minm = delim
@@ -57,7 +64,7 @@ def does_exit(string):
     :param string: The string to check.
     :return: Whether the string starts with a text mode delimiter.
     """
-    return any(string.startswith(delim) for delim in math_end)
+    return any(string.startswith(delim) for delim in mathEnd)
 
 
 def does_enter(string):
@@ -67,7 +74,7 @@ def does_enter(string):
     :param string: The string to check.
     :return: Whether the string starts with a math mode delimiter.
     """
-    return any(string.startswith(delim) for delim in math_start)
+    return any(string.startswith(delim) for delim in mathStart)
 
 
 def parse_math(string, start, ranges):
@@ -95,10 +102,10 @@ def parse_math(string, start, ranges):
                     ranges.append((begin, start + i))
                 i += parse_non_math(string[i:], start + i, ranges)
                 begin = start + i
-            if string[i:].startswith(math_start[delim]):
+            if string[i:].startswith(mathStart[delim]):
                 if begin != start + i:
                     ranges.append((begin, start + i))
-                return i + len(math_start[delim]) - 1
+                return i + len(mathStart[delim]) - 1
         i += 1
     return i
 
@@ -130,7 +137,6 @@ def parse_non_math(string, start, ranges):
             level += 1
         elif string[i] == "}":
             if level == 0 and delim != "":
-                i += 1
                 return i
             else:
                 level -= 1
@@ -138,22 +144,13 @@ def parse_non_math(string, start, ranges):
     return i
 
 
-def find_math_ranges(string,drmf):
+def find_math_ranges(string):
     # type: (str) -> list
     """
     Returns a list of tuples, each tuple denoting a range of math mode.
     :param string: The string to search within.
     :return: A list of tuples denoting math mode ranges.
     """
-    global math_end
-    if drmf == True:
-        string = string.replace("\\drmfnote","\\drmfname")
-        math_end.extend(["\\constraint{",
-                        "\\substitution"
-                        "\\drmfnote{",
-                        "\\drmfname{",
-                        "\\proof{",
-                         "\\label{"])
     ranges = []
     parse_non_math(string, 0, ranges)
     return ranges[:]
