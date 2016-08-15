@@ -1,6 +1,13 @@
+import os
+
 __author__ = "Rahul Shah"
 __status__ = "Development"
 __credits__ = ["Rahul Shah", "Edward Bian"]
+
+# Path to data directory
+DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../data/"
+
+
 
 # start out by reading KLSadd.tex to get all of the paragraphs that must be added to the chapter files
 # also keep track of which chapter each one is in
@@ -45,7 +52,8 @@ sorterIIIcheck = [[0 for x in range(w)] for y in range(h)]
 
 sortmatch_2 = []
 
-
+test = "memesbananashgvlksrjc%/n"
+print test[-2]
 # 2/18/16 this method addresses the goal of hardcoding in the necessary packages to let the chapter files run as pdf's.
 # Currently only works with chapter 9, ask Dr. Cohl to help port your chapter 14 output file into a pdf
 
@@ -84,10 +92,6 @@ def new_keywords(kls):
                 add = False
         if add:
             kls_list_chap.append(i)
-    liststr2 = '\n'.join(kls_list_chap)
-    with open("trunckeywords.tex", "w") as kw:
-        kw.write(liststr2)
-    print kls_list_chap
     return kls_list_chap
 
 
@@ -272,14 +276,11 @@ def cutwords(word_to_find, word_to_search_in):
             while checkloop == False:
                 if "\\paragraph{\\large\\bf KLSadd: " in b[b.find(a)-precheck:b.find(a)]:
                     cut = b[:b.find(a) - precheck] + b[b.find(a) + len(a):]
-                    checkloop = True
                     return cut
                 elif "\\subsubsection*{\\large\\bf KLSadd: " in b[b.find(a)-precheck:b.find(a)]:
                     cut = b[:b.find(a) - precheck] + b[b.find(a) + len(a):]
-                    checkloop = True
                     return cut
                 else:
-                    print "ding2"
                     precheck += 1
 
         else:
@@ -352,7 +353,7 @@ def insert_commands(kls, chap, cms):
 
 
 # method to find the indices of the reference paragraphs
-def find_references(chapter,chapticker):
+def find_references(chapter, chapticker):
     """
     This function searches the chapters and locates potential destinations of additions from the addendum.
     It puts these destinations in a list.
@@ -492,20 +493,32 @@ def fix_chapter(chap, references, p, kls, kls_list_all, chapticker2):
     for a in range(len(p)-1):
         for b in sortmatch_2:
             for c in b:
-                with open("compare.tex", "a") as spook:
+                with open(DATA_DIR + "compare.tex", "a") as spook:
                     spook.write(p[a])
                     spook.write("NEXT: ")
-                print c
-                print "pause"
-                print a
-                print "l0"
-                print len(c)
-                print "l1"
-                print a
-                print p[a]
+                if "%" == c[-2]:
+                    c = c[:-3]
+                    #print "memes"
+                    #print c
+                elif "%" == c[-1]:
+                    c = c[:-2]
+                    #print "extramemes"
+                    #print c
+                if "Formula (9.8.15) was first obtained by Brafman \myciteKLS{109}." in c:
+                    print "memes"
+                    print c
+                    print "memes"
+                if "Formula (9.8.15) was first obtained by Brafman \myciteKLS{109}." in p[a]:
+                    print "extramemes"
+                    print p[a]
+                    print "extramemes"
+                #if "9.1 Wilson" in p[a]:
+                #    print "l2"
+                #    print c
+                #    print "pause"
+                #    print p[a]
+                #    print "l2"
                 p[a] = cutwords(c, p[a])
-                print("l2")
-
 
     reference_placer(chap, references, p, chapticker2)
     chap = prepare_for_PDF(chap)
@@ -548,7 +561,7 @@ def main():
     :return:
     """
     # open the KLSadd file to do things with
-    with open("KLSadd(3).tex", "r") as add:
+    with open(DATA_DIR + "KLSaddII.tex", "r") as add:
         # store the file as a string
         addendum = add.readlines()
         kls_list_all = new_keywords(addendum)
@@ -610,11 +623,11 @@ def main():
         # parse both files 9 and 14 as strings
 
         # chapter 9
-        with open("chap09.tex", "r") as ch9:
+        with open(DATA_DIR + "chap09.tex", "r") as ch9:
             entire9 = ch9.readlines()  # reads in as a list of strings
 
         # chapter 14
-        with open("chap14.tex", "r") as ch14:
+        with open(DATA_DIR + "chap14.tex", "r") as ch14:
             entire14 = ch14.readlines()
 
         # call the findReferences method to find the index of the References paragraph in the two file strings
@@ -641,10 +654,10 @@ def main():
 
     # write to files
     # new output files for safety
-    with open("updated9.tex", "w") as temp9:
+    with open(DATA_DIR + "updated9.tex", "w") as temp9:
         temp9.write(str9)
 
-    with open("updated14.tex", "w") as temp14:
+    with open(DATA_DIR + "updated14.tex", "w") as temp14:
         temp14.write(str14)
 
 if __name__ == '__main__':
