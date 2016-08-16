@@ -329,9 +329,6 @@ def find_references(chapter, chapticker, math_people):
             besselcheck = 0
     if besselcheck == 1:
         ref9_3.insert(230, 2646)
-    for i in ref14_3:
-        if i == 1217:
-            bqlegendrecheck -= 1
     if bqlegendrecheck > 0:
         pass
 
