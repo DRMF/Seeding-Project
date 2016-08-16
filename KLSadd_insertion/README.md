@@ -13,7 +13,7 @@ NOTE: The KLSadd.tex file only deals with chapters 9 and 14, as stated in the do
 
 NOTE: when you run updateChapters.py or linetest.py you need the KLSadd.tex file, tempchap9.tex, and tempchap14.tex in order to run the program. The program *generates* updated9.tex and updated14.tex files. 
 
-**THIS MEANS YOU SHOULD NOT RUN updateChapters.py OR linetest.py FROM YOUR GIT DIRECTORY. THE CHAPTER FILES ARE NOT PUBLIC DOMAIN, DO NOT COMMIT THEM! COPY THE FILES OVER INTO A SEPERATE DIRECTORY AND THEN COPY THEM BACK OVER WHEN YOU ARE READY TO COMMIT** 
+**DO NOT REMOVE INPUT FILES FROM .GITIGNORE, THEY ARE NOT PUBLIC**
 
 This is a roadmap of updateChapters.py. It will help explain every piece of code and exactly how everything works in relation to each other.
 
@@ -32,7 +32,6 @@ First: the files
  - linetest.py: this abomination of code is the original program. It did the job, and it did it well. However, I realized that it was very very unreadable. This program is the child I never wanted. This program does 100% work and its outputs can be used to check against updateChapters.py's output.
 
  - newtempchap09.tex and newtempchap14.tex these are output files of linetest.py and this is what the output to updateChapters.py should be like!!!!!!!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Next: the specifications
 
@@ -62,7 +61,7 @@ So in the chapter 9 file, section 15 "Dogs", before the References subsection, w
 ```latex
 \paragraph{\large\bf Beagles}
 ```
-
+---
 **It is important to note that these changes are currently (3/25/16) unimplemented in updateChapters.py and only exist in linetest.py, if you want to see how the output to updateChapters.py should look, look at newtempchap09.tex**
 
 So after updateChapters.py is called, the chapter 9 file should look like this:
@@ -80,7 +79,6 @@ in $a,b,c,d$.
 \cite{Dogs101}
 ```
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The variables:
 
 These are the variables in the beginning
@@ -95,7 +93,8 @@ These are the variables in the beginning
 
 -comms: holds the actual strings of the commands found from the line numbers stored in newCommands
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---
+
 The methods:
 
 -prepareForPDF(chap): this method inserts some packages needed by LATEX files to be turned into pdf files. It takes a list called chap which is a String containing the contents of the chapter fie. It returns the chap String edited with the special packages in place.
@@ -107,7 +106,7 @@ The methods:
 -findReferences(str): takes a string representation of a chapter file. Returns a list of the line numbers of the "References" subsections. This references variable is used as an index as to where the paragraphs in paras should be inserted
 
 -fixChapter(chap, references, p, kls): takes a chapter file string, a references list, the paras variable, and the KLSadd file string. This method basically just calls all of the methods above and adds all of the extra stuff like the commands and packages.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 At this point, the code is like 90% comments. The big chunk at the bottom under the "with open..." can be explained through the comments.
 
@@ -117,7 +116,7 @@ The chapters and KLSadd are turned into Strings and passed through the fixChapte
 
 Then the strings are written into seperate updated chapter files.
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---
 
 However, its broken. Inserted text comes in random places between paragraphs and sometimes stuff isn't added. This shouldn't be that hard to fix but it will require combing through the code a lot of times and changing little things here and there until everything works. As a last ditch effort, we can always resort to using linetext.py and adding stuff in from there.
 

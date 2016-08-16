@@ -15,7 +15,7 @@ w, h = 2, 1000
 sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
 
-def repeated_item_deleter(list):
+def extraneous_section_deleter(list):
     item = 0
     while item < len(list):
         if "reference" in list[item].lower() or "limit relation" in list[item].lower():
@@ -38,8 +38,9 @@ def new_keywords(kls, kls_list):
     for item in kls:
         if "paragraph{" in item or "subsubsection*{" in item:
             kls_list.append(item[item.find("{") + 1: len(item) - 2])
+            print item[item.find("{") + 1: len(item) - 2]
 
-    kls_list = repeated_item_deleter(kls_list)
+    kls_list = extraneous_section_deleter(kls_list)
 
     kls_list.append("Limit Relation")
     for item in kls_list:
@@ -73,42 +74,25 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
     k_hyper_sub_chap = []
     index = 0
 
+    chapterstart = False
     for item in kls:
         index += 1
         line = str(item)
         if "\\subsection" in line:
             temp = line[line.find(" ", 12)+1: line.find("}", 12)]  # get just the name (like mathpeople)
+            if temp.lower() == 'wilson':
+                chapterstart = True
+        if sep1 in (0, 2) and name_chap in line.lower() and chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line) or \
+        (sep1 == 1 and "orthogonality relation" not in line.lower() and name_chap in line.lower() and chapterstart
+         and ("\\paragraph{" in line or "\\subsubsection*{" in line)):
+            for item in klsaddparas:
+                if index < item:
+                    klsloc = klsaddparas.index(item)
+                    break
+            t = ''.join(kls[index: klsaddparas[klsloc]])
+            k_hyper_sub_chap.append(t)  # append the whole paragraph, pray every paragraph ends with a % comment
+            khyper_header_chap.append(temp)  # append the name of subsection
 
-        if sep1 == 0:
-            if name_chap in line.lower() and kls.index(item) > 313 and ("\\paragraph{" in line or
-            "\\subsubsection*{" in line):
-                for item in klsaddparas:
-                    if index < item:
-                        klsloc = klsaddparas.index(item)
-                        break
-                t = ''.join(kls[index: klsaddparas[klsloc]])
-                k_hyper_sub_chap.append(t)  # append the whole paragraph, pray every paragraph ends with a % comment
-                khyper_header_chap.append(temp)  # append the name of subsection
-        elif sep1 == 1:
-            if name_chap in line.lower() and kls.index(item) > 313 and ("\\paragraph{" in line or
-            "\\subsubsection*{" in line) and "orthogonality relation" not in line.lower():
-                for item in klsaddparas:
-                    if index < item:
-                        klsloc = klsaddparas.index(item)
-                        break
-                t = ''.join(kls[index: klsaddparas[klsloc]])
-                k_hyper_sub_chap.append(t)  # append the whole paragraph, pray every paragraph ends with a % comment
-                khyper_header_chap.append(temp)  # append the name of subsection
-        elif sep1 == 2:
-            if name_chap in line.lower() and kls.index(item) > 313 and ("\\paragraph{" in line or
-            "\\subsubsection*{" in line):
-                for item in klsaddparas:
-                    if index < item:
-                        klsloc = klsaddparas.index(item)
-                        break
-                t = ''.join(kls[index: klsaddparas[klsloc]])
-                k_hyper_sub_chap.append(t)  # append the whole paragraph, pray every paragraph ends with a % comment
-                khyper_header_chap.append(temp)  # append the name of subsection
     for item in khyper_header_chap:
         if item == "Pseudo Jacobi (or Routh-Romanovski)":
             khyper_header_chap[khyper_header_chap.index(item)] = "Pseudo Jacobi"
@@ -149,6 +133,9 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
         if sep1 == 1:
             offset = 8
 
+    if sep1 == 2:
+        name_chap = 'hypergeometric representation'
+
     for d in range(0, len(tempref)):  # check every section and subsection line
         item = tempref[d]
         line = str(chap[item])
@@ -158,8 +145,8 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
             else:
                 temp = line[9:line.find("}", 7)]
 
-        if sep1 == 0:
-            if name_chap in line.lower():
+        if name_chap in line.lower():
+            if sep1 in (0, 2) or sep1 == 1 and "orthogonality relation" not in line:
                 hyper_subs_chap.append([tempref[d + 1]])  # appends the index for the line before following subsection
                 hyper_headers_chap.append(temp)  # appends the name of the section the hypergeo subsection is in
 
@@ -172,31 +159,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
                         k_hyp_index_iii += 1
                     except IndexError:
                         print("Warning! Code has found an error involving section finding for '" + name_chap + "'.")
-        elif sep1 == 1:
-            if name_chap in line.lower() and "orthogonality relation" not in line:
-                hyper_subs_chap.append([tempref[d + 1]])  # appends the index for the line before following subsection
-                hyper_headers_chap.append(temp)  # appends the name of the section the hypergeo subsection is in
 
-                if temp in khyper_header_chap:
-                    try:
-                        chap[tempref[d + 1] - 1] += "\paragraph{\\bf KLS Addendum: " + word + "}"
-                        chap[tempref[d + 1] - 1] += k_hyper_sub_chap[k_hyp_index_iii + offset]
-                        k_hyp_index_iii += 1
-                    except IndexError:
-                        print("Warning! Code has found an error involving section finding for '" + name_chap + "'.")
-        elif sep1 == 2:
-            if "hypergeometric representation" in line.lower():
-                hyper_subs_chap.append([tempref[d + 1]])  # appends the index for the line before following subsection
-                hyper_headers_chap.append(
-                    temp)  # appends the name of the section the hypergeo subsection is in so we can compare
-
-                if temp in khyper_header_chap:
-                    try:
-                        chap[tempref[d + 1] - 1] += "\paragraph{\\bf KLS Addendum: Special Value }"
-                        chap[tempref[d + 1] - 1] += k_hyper_sub_chap[k_hyp_index_iii + offset]
-                        k_hyp_index_iii += 1
-                    except IndexError:
-                        print("Warning! Code has found an error involving section finding for '" + name_chap + "'.")
 
     if len(hyper_headers_chap) != 0:
         # print "Stuff for checking"
