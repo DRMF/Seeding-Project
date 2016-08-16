@@ -16,13 +16,7 @@ sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
 
 def extraneous_section_deleter(list):
-    item = 0
-    while item < len(list):
-        if "reference" in list[item].lower() or "limit relation" in list[item].lower():
-            del list[item]
-        else:
-            item += 1
-    return list
+    return [item for item in list if "reference" not in item.lower() and "limit relation" not in item.lower()]
 
 
 def new_keywords(kls, kls_list):
@@ -38,8 +32,6 @@ def new_keywords(kls, kls_list):
     for item in kls:
         if "paragraph{" in item or "subsubsection*{" in item:
             kls_list.append(item[item.find("{") + 1: len(item) - 2])
-            print item[item.find("{") + 1: len(item) - 2]
-
     kls_list = extraneous_section_deleter(kls_list)
 
     kls_list.append("Limit Relation")
@@ -170,7 +162,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
         sortmatch_2.append(k_hyper_sub_chap)
 
 
-def cutwords(word_to_find, word_to_search_in):
+def cut_words(word_to_find, word_to_search_in):
     """
     This function checks through the outputs of later sections and removes duplicates, so that the output file does
     not have duplicates.
@@ -185,7 +177,7 @@ def cutwords(word_to_find, word_to_search_in):
     b = word_to_search_in
     precheck = 1
     if a in b:
-        if "\paragraph{\large\bf KLSadd: " or "\subsubsection*{\large\bf KLSadd: " in b:
+        if "\\paragraph{\\large\\bf KLSadd: " in b or "\\subsubsection*{\\large\\bf KLSadd: " in b:
             while True:
                 if "\\paragraph{\\large\\bf KLSadd: " in b[b.find(a)-precheck:b.find(a)] or \
                         "\\subsubsection*{\\large\\bf KLSadd: " in b[b.find(a) - precheck:b.find(a)]:
@@ -429,7 +421,7 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
                 #     print "MEMESBEGIN"*20
                 #     print c
                 #     print "MEMESEND"*24
-                paragraphs_to_be_added[a] = cutwords(c, paragraphs_to_be_added[a])
+                paragraphs_to_be_added[a] = cut_words(c, paragraphs_to_be_added[a])
 
     reference_placer(chap, references, paragraphs_to_be_added, chapticker2)
     chap = prepare_for_PDF(chap)
