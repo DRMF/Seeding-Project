@@ -191,7 +191,8 @@ def cut_words(word_to_find, word_to_search_in):
     else:
         return b
 
-def prepare_for_PDF(chap):
+
+def prepare_for_pdf(chap):
     """
     Edits the chapter string sent to include hyperref, xparse, and cite packages
 
@@ -223,6 +224,7 @@ def get_commands(kls, new_commands):
             new_commands.append(index - 1)
         if "mybibitem[1]" in word:
             new_commands.append(index)
+    print new_commands
     return kls[new_commands[0]:new_commands[1]]
 
 
@@ -424,8 +426,9 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
                 paragraphs_to_be_added[a] = cut_words(c, paragraphs_to_be_added[a])
 
     reference_placer(chap, references, paragraphs_to_be_added, chapticker2)
-    chap = prepare_for_PDF(chap)
+    chap = prepare_for_pdf(chap)
     cms = get_commands(kls,new_commands)
+    print cms
     chap = insert_commands(kls, chap, cms)
     commentticker = 0
 
