@@ -27,5 +27,3 @@ class TestCutWords(TestCase):
         self.assertEquals(cut_words('SupposedToFail', 'WordsAndSomeMoreWords'), 'WordsAndSomeMoreWords')
         self.assertEquals(cut_words('StuffFromAddenum', '''\\paragraph{\\large\\bf KLSadd: TestCase}StuffFromAddenum\\begin{equation}\\end{equation}'''),
                                                         '''\\begin{equation}\\end{equation}''')
-        #self.assertEquals(extraneous_section_deleter(['reference', 'bananas', 'limit relation', '458673',
-        #     'limit relations', 'apple']), ['bananas', '458673', 'apple'])
