@@ -287,7 +287,7 @@ def find_references(chapter, chapticker, math_people):
 
     for word in chapter:
         index += 1
-        specialdetector = 1
+        special_detector = 1
         # check sections and subsections
         if("section{" in word or "subsection*{" in word) and ("subsubsection*{" not in word):
             w = word[word.find("{")+1: word.find("}")]
@@ -302,8 +302,8 @@ def find_references(chapter, chapticker, math_people):
                         ref9_3.append(index)
                     elif chapticker == 1:
                         ref14_3.append(index)
-                    specialdetector = 0
-        if"\\subsection*{References}" in word and canadd:
+                    special_detector = 0
+        if "\\subsection*{References}" in word and canadd:
             # Appends valid locations
             references.append(index)
             if chapticker == 0:
@@ -316,7 +316,7 @@ def find_references(chapter, chapticker, math_people):
                 ref9_3.append(index)
             elif chapticker == 1:
                 ref14_3.append(index)
-        if "\\section{" in word and specialdetector == 1 and chaptercheck == "14":
+        if "\\section{" in word and special_detector == 1 and chaptercheck == "14":
             w2 = word[word.find("{") + 1: word.find("}")]
             if "Bessel" not in w2:
                 ref14_3.append(index)
