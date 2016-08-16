@@ -16,6 +16,12 @@ sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
 
 def extraneous_section_deleter(list):
+    """
+    Removes sections that are irrelevant and will slow or confuse the program
+
+    :param list:
+    :return: Extraneous name free output
+    """
     return [item for item in list if "reference" not in item.lower() and "limit relation" not in item.lower()]
 
 
@@ -128,6 +134,8 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
     if sep1 == 2:
         name_chap = 'hypergeometric representation'
 
+    # Uses of numbers like 12, or 9 are for specific lengths of strings (like \\subsection{) where the
+    # section does not change
     for d in range(0, len(tempref)):  # check every section and subsection line
         item = tempref[d]
         line = str(chap[item])
@@ -197,7 +205,7 @@ def prepare_for_pdf(chap):
     Edits the chapter string sent to include hyperref, xparse, and cite packages
 
     :param chap: The chapter (9 or 14) that is being processed
-    :return:
+    :return: The processed chapter, ready for additional processing
     """
     foot_misc_index = 0
     index = 0
@@ -212,7 +220,7 @@ def prepare_for_pdf(chap):
 
 def get_commands(kls, new_commands):
     """
-    this method reads in relevant commands that are in KLSadd.tex and returns them as a list
+    This method reads in relevant commands that are in KLSadd.tex and returns them as a list
 
     :param kls: The addendum is the source of what is being found
     :return:
@@ -315,6 +323,7 @@ def find_references(chapter, chapticker, math_people):
     besselcheck = 1
     bqlegendrecheck = 2
 
+    # Special lines that the program does not normally register
     for i in ref9_3:
         if i == 2646:
             besselcheck = 0
@@ -432,7 +441,7 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     chap = insert_commands(kls, chap, cms)
     commentticker = 0
 
-    # Hard coded command remover
+    # These commands mess up PDF reading and mus tbe commented out
     for word in chap:
         word2 = chap[chap.index(word)-1]
         if "\\newcommand{\qhypK}[5]{\,\mbox{}_{#1}\phi_{#2}\!\left(" not in word2:
@@ -573,6 +582,7 @@ def main():
 
     with open(DATA_DIR + "updated14.tex", "w") as temp14:
         temp14.write(str14)
+    print math_people
 
 if __name__ == '__main__':
     main()
