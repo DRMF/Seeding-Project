@@ -14,6 +14,51 @@ ref14_3 = []
 w, h = 2, 1000
 sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
+def reference_formatter(kls):
+    """
+    This function formats all in addendum references in order to distinguish them from non-addendum references
+    :param kls:
+    :return:
+    """
+    for item in kls:
+        ref_count = item.count('\eqref{')
+        if ref_count == 1:
+            kls[kls.index(item)] = item[:item.find('\eqref{')+7] + "KLSadd: " +  item[item.find('\eqref{')+7:]
+        elif ref_count == 2:
+            subitem = item[:item.find('\eqref{')+7] + "KLSadd: " +  item[item.find('\eqref{')+7:item.find('\eqref{')+10]
+            subitem2 = item[len(subitem)-8:]
+            subitem2b = subitem2[:subitem2.find('\eqref{')+7] + "KLSadd: " +  subitem2[subitem2.find('\eqref{')+7:]
+            kls[kls.index(item)] = subitem + subitem2b
+        elif ref_count == 3:
+            subitem = item[:item.find('\eqref{') + 7] + "KLSadd: " + item[item.find('\eqref{') + 7:item.find('\eqref{') + 10]
+            subitem2 = item[len(subitem) - 8:]
+            subitem2b = subitem2[:subitem2.find('\eqref{') + 7] + "KLSadd: " + subitem2[subitem2.find('\eqref{') + 7:subitem2.find('\eqref{') + 10]
+            subitem3 = item[len(subitem)+len(subitem2b) - 16:]
+            subitem3b = subitem3[:subitem3.find('\eqref{') + 7] + "KLSadd: " + subitem3[subitem3.find('\eqref{') + 7:]
+            kls[kls.index(item)] = subitem + subitem2b + subitem3b
+        elif ref_count == 4:
+            subitem = item[:item.find('\eqref{') + 7] + "KLSadd: " + item[item.find('\eqref{') + 7:item.find('\eqref{') + 10]
+            subitem2 = item[len(subitem) - 8:]
+            subitem2b = subitem2[:subitem2.find('\eqref{') + 7] + "KLSadd: " + subitem2[subitem2.find('\eqref{') + 7:subitem2.find('\eqref{') + 10]
+            subitem3 = item[len(subitem) + len(subitem2b) - 16:]
+            subitem3b = subitem3[:subitem3.find('\eqref{') + 7] + "KLSadd: " + subitem3[subitem3.find('\eqref{') + 7:subitem3.find('\eqref{') + 10]
+            subitem4 = item[len(subitem) + len(subitem2b) +len(subitem3b) - 24:]
+            subitem4b = subitem4[:subitem4.find('\eqref{') + 7] + "KLSadd: " + subitem4[subitem4.find('\eqref{') + 7:]
+            kls[kls.index(item)] = subitem + subitem2b + subitem3b + subitem4b
+        elif ref_count == 5:
+            subitem = item[:item.find('\eqref{') + 7] + "KLSadd: " + item[item.find('\eqref{') + 7:item.find('\eqref{') + 10]
+            subitem2 = item[len(subitem) - 8:]
+            subitem2b = subitem2[:subitem2.find('\eqref{') + 7] + "KLSadd: " + subitem2[subitem2.find('\eqref{') + 7:subitem2.find('\eqref{') + 10]
+            subitem3 = item[len(subitem) + len(subitem2b) - 16:]
+            subitem3b = subitem3[:subitem3.find('\eqref{') + 7] + "KLSadd: " + subitem3[subitem3.find('\eqref{') + 7:subitem3.find('\eqref{') + 10]
+            subitem4 = item[len(subitem) + len(subitem2b) + len(subitem3b) - 24:]
+            subitem4b = subitem4[:subitem4.find('\eqref{') + 7] + "KLSadd: " + subitem4[subitem4.find('\eqref{') + 7:subitem4.find('\eqref{') + 10]
+            subitem5 = item[len(subitem) + len(subitem2b) + len(subitem3b) + len(subitem4b) - 32:]
+            subitem5b = subitem5[:subitem5.find('\eqref{') + 7] + "KLSadd: " + subitem5[subitem5.find('\eqref{') + 7:]
+            kls[kls.index(item)] = subitem + subitem2b + subitem3b + subitem4b + subitem5b
+
+    return kls
+
 
 def extraneous_section_deleter(list):
     """
@@ -557,6 +602,8 @@ def main():
 
         # call the findReferences method to find the index of the References paragraph in the two file strings
         # two variables for the references lists one for chapter 9 one for chapter 14
+        addendum = reference_formatter(addendum)
+
         chapticker = 0
         references9 = find_references(entire9, chapticker, math_people)
         chapticker += 1
