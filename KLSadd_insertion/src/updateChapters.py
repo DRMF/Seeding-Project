@@ -157,8 +157,8 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
 
                 if temp in khyper_header_chap:
                     try:
-                        chap[tempref[d + 1] - 1] += "\paragraph{\\bf KLS Addendum: " + word + "}"
-                        chap[tempref[d + 1] - 1] += k_hyper_sub_chap[k_hyp_index_iii + offset]
+                        chap[tempref[d + 1] - 1] += "\paragraph{\\bf KLS Addendum: " + word + "}" + \
+                                                    k_hyper_sub_chap[k_hyp_index_iii + offset]
                         if chap9 == 1:
                             sorter_check[sortloc][1] += 1
                         k_hyp_index_iii += 1
