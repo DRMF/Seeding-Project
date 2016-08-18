@@ -22,7 +22,8 @@ def extraneous_section_deleter(list):
     :param list:
     :return: Extraneous name free output
     """
-    return [item for item in list if "reference" not in item.lower() and "limit relation" not in item.lower()]
+    return [item for item in list if "reference" not in item.lower() and "limit relation" not in item.lower()
+            and "symmetry" not in item.lower()]
 
 
 def new_keywords(kls, kls_list):
@@ -41,6 +42,7 @@ def new_keywords(kls, kls_list):
     kls_list = extraneous_section_deleter(kls_list)
 
     kls_list.append("Limit Relation")
+    kls_list.append("Symmetry")
     for item in kls_list:
         if item not in kls_list_chap:
             kls_list_chap.append(item)
@@ -61,12 +63,14 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
     hyper_headers_chap = []
     hyper_subs_chap = []
 
-    sep1 = 0
+    specialinput = 0
     name_chap = word.lower()
     if name_chap == "orthogonality":
-        sep1 = 1
+        specialinput = 1
     elif name_chap == "special value":
-        sep1 = 2
+        specialinput = 2
+    elif name_chap == "symmetry":
+        specialinput = 3
 
     khyper_header_chap = []
     k_hyper_sub_chap = []
@@ -80,8 +84,8 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
             temp = line[line.find(" ", 12)+1: line.find("}", 12)]  # get just the name (like mathpeople)
             if temp.lower() == 'wilson':
                 chapterstart = True
-        if sep1 in (0, 2) and name_chap in line.lower() and chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line) or \
-        (sep1 == 1 and "orthogonality relation" not in line.lower() and name_chap in line.lower() and chapterstart
+        if specialinput in (0,2) and name_chap in line.lower() and chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line) or \
+        (specialinput in (1, 3) and "orthogonality relation" not in line.lower() and name_chap in line.lower() and chapterstart
          and ("\\paragraph{" in line or "\\subsubsection*{" in line)):
             for item in klsaddparas:
                 if index < item:
@@ -128,10 +132,10 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
     else:
         tempref = ref14_3
         offset = sorter_check[sortloc][1]
-        if sep1 == 1:
+        if specialinput == 1:
             offset = 8
 
-    if sep1 == 2:
+    if specialinput in (2, 3):
         name_chap = 'hypergeometric representation'
 
     # Uses of numbers like 12, or 9 are for specific lengths of strings (like \\subsection{) where the
@@ -146,7 +150,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
                 temp = line[9:line.find("}", 7)]
 
         if name_chap in line.lower():
-            if sep1 in (0, 2) or sep1 == 1 and "orthogonality relation" not in line:
+            if specialinput in (0, 2, 3) or specialinput == 1 and "orthogonality relation" not in line:
                 hyper_subs_chap.append([tempref[d + 1]])  # appends the index for the line before following subsection
                 hyper_headers_chap.append(temp)  # appends the name of the section the hypergeo subsection is in
 
