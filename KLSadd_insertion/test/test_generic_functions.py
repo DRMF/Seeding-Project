@@ -10,7 +10,8 @@ from updateChapters import cut_words
 class TestNewKeywords(TestCase):
 
     def test_new_keywords(self):
-        self.assertEquals(new_keywords(['\\subsubsection*{ThisIsATest}\n'],[]), ['ThisIsATest', 'Limit Relation', 'Symmetry'])
+        self.assertEquals(new_keywords(['\\subsubsection*{ThisIsATest}\n', '\\subsubsection*{Special value}\n']
+                                       ,[]), ['ThisIsATest', 'Symmetry', 'Limit Relation', 'Special value'])
 
 
 class TestExtraneousSectionDeleter(TestCase):
