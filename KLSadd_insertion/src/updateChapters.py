@@ -15,6 +15,36 @@ w, h = 2, 1000
 sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
 
+def chap1placer(chap1, kls, klsaddparas):
+    chapterstart = True
+    index = 0
+    kls_sub_chap1 = []
+    kls_header_chap1 = []
+    for item in kls:
+        index += 1
+        line = str(item)
+        if "\\subsection" in line:
+            temp = line[line.find(" ", 12) + 1: line.find("}", 12)+1]  # get just the name (like mathpeople)
+            print temp
+            if 'wilson' in temp.lower():
+                chapterstart = False
+                print("ding")
+        if chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line):
+            for item in klsaddparas:
+                if index < item:
+                    klsloc = klsaddparas.index(item)
+                    break
+            t = ''.join(kls[index-1: klsaddparas[klsloc]])
+            kls_sub_chap1.append(t)  # append the whole paragraph, pray every paragraph ends with a % comment
+            kls_header_chap1.append(temp)  # append the name of subsection
+            break
+    intro_to_add = ''.join(kls_sub_chap1)
+    chap1 = chap1[:len(chap1)-1]
+    chap1 = ''.join(chap1)
+    total_chap1 = chap1 + "\\paragraph{\\large\\bf KLS Addendum: Generalities}" + intro_to_add + "\\end{document}"
+    return total_chap1
+
+
 def extraneous_section_deleter(list):
     """
     Removes sections that are irrelevant and will slow or confuse the program
@@ -547,6 +577,14 @@ def main():
         # as of 2/8/16 the paragraphs will go before the References paragraph of the relevant section
         # parse both files 9 and 14 as strings
 
+        with open(DATA_DIR + "chap01.tex", "r") as ch1:
+            entire1 = ch1.readlines()  # reads in as a list of strings
+
+        chap1placer(entire1, addendum, klsaddparas)
+
+        with open(DATA_DIR + "updated1.tex", "w") as temp1:
+            temp1.write(chap1placer(entire1, addendum, klsaddparas))
+
         # chapter 9
         with open(DATA_DIR + "chap09.tex", "r") as ch9:
             entire9 = ch9.readlines()  # reads in as a list of strings
@@ -588,6 +626,7 @@ def main():
     with open(DATA_DIR + "updated14.tex", "w") as temp14:
         temp14.write(str14)
     print math_people
+    print klsaddparas
 
 if __name__ == '__main__':
     main()
