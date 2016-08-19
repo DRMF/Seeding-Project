@@ -403,6 +403,7 @@ def reference_placer(chap, references, p, chapticker2):
                     count += 1
                 else:
                     count += 1
+    return chap
 
 
 # method to change file string(actually a list right now), returns string to be written to file
@@ -622,7 +623,7 @@ def main():
     with open(DATA_DIR + "updated14.tex", "w") as temp14:
         temp14.write(str14)
     print math_people
-    print klsaddparas
+    print paras
 
 if __name__ == '__main__':
     main()
