@@ -25,10 +25,6 @@ def chap1placer(chap1, kls, klsaddparas):
         line = str(item)
         if "\\subsection" in line:
             temp = line[line.find(" ", 12) + 1: line.find("}", 12)+1]  # get just the name (like mathpeople)
-            print temp
-            if 'wilson' in temp.lower():
-                chapterstart = False
-                print("ding")
         if chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line):
             for item in klsaddparas:
                 if index < item:
