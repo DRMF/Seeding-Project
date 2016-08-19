@@ -1,8 +1,8 @@
 ##KLS Addendum Insertion Project
 
-This project uses python and string manipulation to insert sections of the KLSadd.tex file into the appropriate DRMF chapter sections. The updateChapters.py program is the most recently updated and cleanest version, however it is not completed. Should be run with a simple call to 
+This project uses Python and string manipulation to insert sections of the KLSadd.tex file into the appropriate DRMF chapter sections. The updateChapters.py program is the most recently updated and cleanest version, however it is not completed. Should be run with a simple call to 
 ```
-python updateChapters.py
+Python updateChapters.py
 ```
 The program must have a tempchap9.tex and a tempchap14.tex as well as the KLSadd.tex file in the same directory!
 The linetest.py program is the original program file fully updated. It is much harder to read and should only be used as a reference to update the updateChapters.py program. 
@@ -62,7 +62,6 @@ So in the chapter 9 file, section 15 "Dogs", before the References subsection, w
 \paragraph{\large\bf Beagles}
 ```
 ---
-**It is important to note that these changes are currently (3/25/16) unimplemented in updateChapters.py and only exist in linetest.py, if you want to see how the output to updateChapters.py should look, look at newtempchap09.tex**
 
 So after updateChapters.py is called, the chapter 9 file should look like this:
 
@@ -108,7 +107,7 @@ The methods:
 -fixChapter(chap, references, p, kls): takes a chapter file string, a references list, the paras variable, and the KLSadd file string. This method basically just calls all of the methods above and adds all of the extra stuff like the commands and packages.
 
 
-At this point, the code is like 90% comments. The big chunk at the bottom under the "with open..." can be explained through the comments.
+
 
 As a quick rundown:
 
@@ -118,6 +117,6 @@ Then the strings are written into seperate updated chapter files.
 
 ---
 
-However, its broken. Inserted text comes in random places between paragraphs and sometimes stuff isn't added. This shouldn't be that hard to fix but it will require combing through the code a lot of times and changing little things here and there until everything works. As a last ditch effort, we can always resort to using linetext.py and adding stuff in from there.
+At this point in time updateChapters.py is mostly functional (there are still a few areas that do not work correctly). Currently, unit tests and additional functions are being added.
 
 
