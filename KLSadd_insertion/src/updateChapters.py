@@ -8,8 +8,6 @@ __credits__ = ["Rahul Shah", "Edward Bian"]
 DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../data/"
 
 # holds all subsections in each chapter section along with the what holds
-ref9_3 = []
-ref14_3 = []
 
 w, h = 2, 1000
 sorter_check = [[0 for _ in range(w)] for __ in range(h)]
@@ -76,7 +74,7 @@ def new_keywords(kls, kls_list):
     return kls_list_chap
 
 
-def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
+def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref):
     """
     This function sorts through the input files and identifies and places sections from the addendum after their
     respective subsections in the chapter.
@@ -134,6 +132,9 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
             if khyper_header_chap[item] == khyper_header_chap[item+1]:
                 k_hyper_sub_chap[item + 1] = k_hyper_sub_chap[item] + "\paragraph{\\bf KLS Addendum: " + \
                     word + "}\n" + k_hyper_sub_chap[item + 1]
+                print khyper_header_chap[item]
+                print "ding"
+                print k_hyper_sub_chap[item + 1]
                 khyper_header_chap[item] = "memes"
                 k_hyper_sub_chap[item] = "memes"
             else:
@@ -153,11 +154,9 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
     chap9 = 0
 
     if sorter_check[sortloc][0] == 0:
-        tempref = ref9_3
         sorter_check[sortloc][0] += 1
         chap9 = 1
     else:
-        tempref = ref14_3
         offset = sorter_check[sortloc][1]
         if special_input == 1:
             offset = 8
@@ -199,7 +198,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2):
         # print hyper_headers_chap
         # print word
         sortmatch_2.append(k_hyper_sub_chap)
-
+    return chap
 
 def cut_words(word_to_find, word_to_search_in):
     """
@@ -305,6 +304,8 @@ def find_references(chapter, chapticker, math_people):
     :param chapticker: Which chapter is being searched (9 or 14).
     :return: List of references.
     """
+    ref9_3 = []
+    ref14_3 = []
     references = []
     index = -1
     # chaptercheck designates which chapter is being searched for references
@@ -363,7 +364,7 @@ def find_references(chapter, chapticker, math_people):
     if bqlegendrecheck > 0:
         pass
 
-    return references
+    return references, ref9_3, ref14_3
 
 
 def reference_placer(chap, references, p, chapticker2):
@@ -408,7 +409,7 @@ def reference_placer(chap, references, p, chapticker2):
 
 # method to change file string(actually a list right now), returns string to be written to file
 # If you write a method that changes something, it is preffered that you call the method in here
-def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2):
+def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, tempref):
     """
     Removes specific lines stopping the latex file from converting into python, as well as running the
     functions responsible for sorting sections and placing the correct additions in the correct places
@@ -425,7 +426,7 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     sort_location = 0
 
     for i in kls_list_all:
-        fix_chapter_sort(kls, chap, i, sort_location, klsaddparas, sortmatch_2)
+        fix_chapter_sort(kls, chap, i, sort_location, klsaddparas, sortmatch_2, tempref)
         sort_location += 1
 
     for a in range(len(paragraphs_to_be_added)-1):
@@ -434,33 +435,12 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
                 with open(DATA_DIR + "compare.tex", "a") as spook:
                     spook.write(paragraphs_to_be_added[a])
                     spook.write("NEXT: ")
-                # i = 0
-                # while i < len(c) - 1:
-                #     if c[i:i + 1] == '\n':
-                #         c = c[:i] + c[i + 1:]
-                #     else:
-                #         i += 1
-                # i = 0
-                # shortened_paras = paragraphs_to_be_added[a]
-                # while i < len(shortened_paras) - 1:
-                #     if shortened_paras[i:i + 1] == '\n':
-                #         shortened_paras = shortened_paras[:i] + shortened_paras[i + 1:]
-                #     else:
-                #         i += 1
-                # paragraphs_to_be_added[a] = shortened_paras
                 if "%" == c[-2]:
                      c = c[:-3]
                      #print "memes"
                      #print c
                 elif "%" == c[-1]:
                      c = c[:-2]
-                    #print "extramemes"
-                    #print c
-                # if "Formula (9.8.15) was first obtained by Brafman \myciteKLS{109}." in c and \
-                #         "Formula (9.8.15) was first obtained by Brafman \myciteKLS{109}." in p[a]:
-                #     print "MEMESBEGIN"*20
-                #     print c
-                #     print "MEMESEND"*24
                 paragraphs_to_be_added[a] = cut_words(c, paragraphs_to_be_added[a])
 
     reference_placer(chap, references, paragraphs_to_be_added, chapticker2)
@@ -523,6 +503,9 @@ def main():
         kls_list_all = new_keywords(addendum, kls_list_full)
         # Makes sections look like other sections
 
+        for item in addendum:
+            addendum[addendum.index(item)] = item.replace("\\eqref{","\\eqref{KLSadd: ")
+
         for word in addendum:
             if "paragraph{" in word:
                 lenword = len(word) - 1
@@ -537,6 +520,7 @@ def main():
 
         # Designates sections that need stuff added
         # get the index
+        startindex = 9999
         for word in addendum:
             index += 1
             if "." in word and "\\subsection*{" in word:
@@ -548,12 +532,15 @@ def main():
                     chap_nums.append(14)
                     name = word[word.find("{") + 1: word.find("}")]
                     math_people.append(name + "#")
+                if name == "9.1 Wilson":
+                    startindex = addendum.index(word)
+                    print startindex
                 indexes.append(index-1)
-            if "paragraph{" in word and index > 313:
+            if "paragraph{" in word and index > startindex-1:
                 klsaddparas.append(index-1)
-            if "subsub" in word and index > 313:
+            if "subsub" in word and index > startindex-1:
                 klsaddparas.append(index - 1)
-            if "\subsection*{" in word and index > 313:
+            if "\subsection*{" in word and index > startindex-1:
                 klsaddparas.append(index - 1)
         klsaddparas.append(2246)
         print(indexes)
@@ -577,11 +564,8 @@ def main():
         with open(DATA_DIR + "chap01.tex", "r") as ch1:
             entire1 = ch1.readlines()  # reads in as a list of strings
 
-        chap1placer(entire1, addendum, klsaddparas)
-
         with open(DATA_DIR + "updated1.tex", "w") as temp1:
             temp1.write(chap1placer(entire1, addendum, klsaddparas))
-
         # chapter 9
         with open(DATA_DIR + "chap09.tex", "r") as ch9:
             entire9 = ch9.readlines()  # reads in as a list of strings
@@ -592,23 +576,26 @@ def main():
 
         # call the findReferences method to find the index of the References paragraph in the two file strings
         # two variables for the references lists one for chapter 9 one for chapter 14
-        for item in addendum:
-            addendum[addendum.index(item)] = item.replace("\\eqref{", "\\eqref{KLSadd: ")
 
         chapticker = 0
         references9 = find_references(entire9, chapticker, math_people)
+        ref9_3 = references9[1]
+        references9 = references9[0]
         chapticker += 1
         references14 = find_references(entire14, chapticker, math_people)
+        ref14_3 = references14[2]
+        references14 = references14[0]
+
         ref14_3.insert(88, 1217)
         ref14_3.insert(244, 3053)
         ref14_3.insert(198, 2554)
 
         # call the fixChapter method to get a list with the addendum paragraphs added in
         chapticker2 = 0
-        str9 = ''.join(fix_chapter(entire9, references9, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2))
+        str9 = ''.join(fix_chapter(entire9, references9, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref9_3))
 
         chapticker2 += 1
-        str14 = ''.join(fix_chapter(entire14, references14, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2))
+        str14 = ''.join(fix_chapter(entire14, references14, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref14_3))
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # If you are writing something that will make a change to the chapter files, write it BEFORE this line, this part
@@ -622,8 +609,6 @@ def main():
 
     with open(DATA_DIR + "updated14.tex", "w") as temp14:
         temp14.write(str14)
-    print math_people
-    print paras
 
 if __name__ == '__main__':
     main()
