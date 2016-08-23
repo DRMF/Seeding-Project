@@ -9,7 +9,7 @@ DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../data/"
 
 # holds all subsections in each chapter section along with the what holds
 
-w, h = 2, 500
+w, h = 2, 100
 sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
 
@@ -199,7 +199,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         # print hyper_headers_chap
         # print word
         sortmatch_2.append(k_hyper_sub_chap)
-    return chap, sorter_check
+    return chap
 
 def cut_words(word_to_find, word_to_search_in):
     """
