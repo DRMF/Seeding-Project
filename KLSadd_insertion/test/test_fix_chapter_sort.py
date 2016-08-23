@@ -33,7 +33,7 @@ class TestFixChapterSort(TestCase):
                                             , '\\begin{eqnarray}'
                                             , '\\label{OrthIWilson}'
                                             , '& &\\frac{1}{2\\pi}\\int_0^{\\infty}'
-                                            , '\\end{eqnarray}'],[])
+                                            , '\\end{eqnarray}'])
         self.assertEquals(fix_chapter_sort(['%'
                                           , '\\subsection*{9.1 Wilson}'
                                           , '\\paragraph{Orthogonality}'
@@ -59,4 +59,4 @@ class TestFixChapterSort(TestCase):
                                             , '\\begin{eqnarray}'
                                             , '\\label{OrthIWilson}'
                                             , '& &\\frac{1}{2\\pi}\\int_0^{\\infty}'
-                                            , '\\end{eqnarray}'],[])
+                                            , '\\end{eqnarray}'])
