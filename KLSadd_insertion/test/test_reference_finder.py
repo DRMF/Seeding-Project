@@ -43,3 +43,19 @@ class TestFindReferences(TestCase):
                                             , 'with $N$ a nonnegative integer.', '\subsection*{References}',
                                             '\cite{Askey89I}, \cite{AskeyWilson79}, \cite{AskeyWilson85}'],
                                             1, ['9.2 Racah#']), ([], [], [0, 1]))
+        self.assertEquals(find_references(['\\section{Unique}\\index{Racah polynomials}',
+                                           '\\subsection*{Bessel}', '\\begin{eqnarray}',
+                                           '\\label{DefRacah}',
+                                           '& &R_n(\lambda(x);\alpha,\beta,\gamma,\delta)\nonumber\\'
+                                            , '& &{}=\hyp{4}{3}{-n,n+\alpha+\beta+1,-x,', '\end{eqnarray}'
+                                            , 'with $N$ a nonnegative integer.', '\subsection*{References}',
+                                           '\cite{Askey89I}, \cite{AskeyWilson79}, \cite{AskeyWilson85}'],
+                                          0, ['9.2 Racah#']), ([], [1, 1], []))
+        self.assertEquals(find_references(['\\section{Unique}\\index{Racah polynomials}',
+                                           '\\subsection*{Big $q$-Legendre}', '\\begin{eqnarray}',
+                                           '\\label{DefRacah}',
+                                           '& &R_n(\lambda(x);\alpha,\beta,\gamma,\delta)\nonumber\\'
+                                              , '& &{}=\hyp{4}{3}{-n,n+\alpha+\beta+1,-x,', '\end{eqnarray}'
+                                              , 'with $N$ a nonnegative integer.', '\subsection*{References}',
+                                           '\cite{Askey89I}, \cite{AskeyWilson79}, \cite{AskeyWilson85}'],
+                                          1, ['9.2 Racah#']), ([], [], [0, 1, 1]))
