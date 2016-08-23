@@ -9,7 +9,7 @@ DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../data/"
 
 # holds all subsections in each chapter section along with the what holds
 
-w, h = 2, 1000
+w, h = 2, 500
 sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
 
@@ -47,7 +47,8 @@ def extraneous_section_deleter(list):
     :return: Extraneous name free output
     """
     return [item for item in list if "reference" not in item.lower() and "limit relation" not in item.lower()
-            and "symmetry" not in item.lower()]
+            and "symmetry" not in item.lower() and " hypergeometric representation" not in item.lower()
+            and "hypergeometric representation " not in item.lower()]
 
 
 def new_keywords(kls, kls_list):
@@ -198,7 +199,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         # print hyper_headers_chap
         # print word
         sortmatch_2.append(k_hyper_sub_chap)
-    return chap
+    return chap, sorter_check
 
 def cut_words(word_to_find, word_to_search_in):
     """
@@ -324,6 +325,10 @@ def find_references(chapter, chapticker, math_people):
         if("section{" in word or "subsection*{" in word) and ("subsubsection*{" not in word):
             w = word[word.find("{")+1: word.find("}")]
             ws = word[word.find("{")+1: word.find("~")]
+            if "bessel" in word.lower() and chapticker == 0:
+                ref9_3.append(index)
+            if ("big $q$-legendre" in word.lower() or "little $q$-legendre" in word.lower() or "continuous $q$-legendre" in word.lower()) and chapticker == 1:
+                ref14_3.append(index)
             for unit in math_people:
                 subunit = unit[unit.find(" ")+1: unit.find("#")]
                 # System of checks that verifies if section is in chapter
@@ -352,15 +357,10 @@ def find_references(chapter, chapticker, math_people):
             w2 = word[word.find("{") + 1: word.find("}")]
             if "Bessel" not in w2:
                 ref14_3.append(index)
-    besselcheck = 1
+
     bqlegendrecheck = 2
 
     # Special lines that the program does not normally register
-    for i in ref9_3:
-        if i == 2646:
-            besselcheck = 0
-    if besselcheck == 1:
-        ref9_3.insert(230, 2646)
     if bqlegendrecheck > 0:
         pass
 
@@ -542,7 +542,9 @@ def main():
                 klsaddparas.append(index - 1)
             if "\subsection*{" in word and index > startindex-1:
                 klsaddparas.append(index - 1)
-        klsaddparas.append(2246)
+            if "\\renewcommand{\\refname}{Standard references}" in word:
+                klsaddparas.append(index-1)
+                indexes.append(index - 1)
         print(indexes)
         # now indexes holds all of the places there is a section
         # using these indexes, get all of the words in between and add that to the paras[]
@@ -550,8 +552,6 @@ def main():
         for i in range(len(indexes)-1):
             box = ''.join(addendum[indexes[i]: indexes[i+1]-1])
             paras.append(box)
-        box2 = ''.join(addendum[indexes[35]: 2245])
-        paras.append(box2)
 
 
         # paras now holds the paragraphs that need to go into the chapter files, but they need to go in the appropriate
@@ -586,10 +586,8 @@ def main():
         ref14_3 = references14[2]
         references14 = references14[0]
 
-        ref14_3.insert(88, 1217)
-        ref14_3.insert(244, 3053)
-        ref14_3.insert(198, 2554)
 
+        print ref14_3
         # call the fixChapter method to get a list with the addendum paragraphs added in
         chapticker2 = 0
         str9 = ''.join(fix_chapter(entire9, references9, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref9_3))
@@ -609,6 +607,8 @@ def main():
 
     with open(DATA_DIR + "updated14.tex", "w") as temp14:
         temp14.write(str14)
+
+    print sorter_check
 
 if __name__ == '__main__':
     main()
