@@ -9,8 +9,8 @@ DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../data/"
 
 # holds all subsections in each chapter section along with the what holds
 
-w, h = 2, 100
-sorter_check = [[0 for _ in range(w)] for __ in range(h)]
+# w, h = 2, 100
+# sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
 
 def chap1placer(chap1, kls, klsaddparas):
@@ -72,10 +72,13 @@ def new_keywords(kls, kls_list):
             kls_list_chap.append(item)
     kls_list_chap[kls_list_chap.index("Special value")] = "Symmetry"
     kls_list_chap.append("Special value")
-    return kls_list_chap
+    w = 2
+    h = len(kls_list_chap)+1
+    sorter_check = [[0 for _ in range(w)] for __ in range(h)]
+    return kls_list_chap, sorter_check
 
 
-def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref):
+def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref, sorter_check):
     """
     This function sorts through the input files and identifies and places sections from the addendum after their
     respective subsections in the chapter.
@@ -133,9 +136,6 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
             if khyper_header_chap[item] == khyper_header_chap[item+1]:
                 k_hyper_sub_chap[item + 1] = k_hyper_sub_chap[item] + "\paragraph{\\bf KLS Addendum: " + \
                     word + "}\n" + k_hyper_sub_chap[item + 1]
-                print khyper_header_chap[item]
-                print "ding"
-                print k_hyper_sub_chap[item + 1]
                 khyper_header_chap[item] = "memes"
                 k_hyper_sub_chap[item] = "memes"
             else:
@@ -151,7 +151,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         else:
             a += 1
 
-    global sorter_check
+    #global sorter_check
     chap9 = 0
 
     if sorter_check[sortloc][0] == 0:
@@ -409,7 +409,7 @@ def reference_placer(chap, references, p, chapticker2):
 
 # method to change file string(actually a list right now), returns string to be written to file
 # If you write a method that changes something, it is preffered that you call the method in here
-def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, tempref):
+def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, tempref, sorter_check):
     """
     Removes specific lines stopping the latex file from converting into python, as well as running the
     functions responsible for sorting sections and placing the correct additions in the correct places
@@ -426,8 +426,9 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     sort_location = 0
 
     for i in kls_list_all:
-        fix_chapter_sort(kls, chap, i, sort_location, klsaddparas, sortmatch_2, tempref)
+        fix_chapter_sort(kls, chap, i, sort_location, klsaddparas, sortmatch_2, tempref, sorter_check)
         sort_location += 1
+        print sorter_check
 
     for a in range(len(paragraphs_to_be_added)-1):
         for b in sortmatch_2:
@@ -500,8 +501,9 @@ def main():
     with open(DATA_DIR + "KLSaddII.tex", "r") as add:
         # store the file as a string
         addendum = add.readlines()
-        kls_list_all = new_keywords(addendum, kls_list_full)
+        kls_list_all = new_keywords(addendum, kls_list_full)[0]
         # Makes sections look like other sections
+        sorter_check = new_keywords(addendum, kls_list_full)[1]
 
         for item in addendum:
             addendum[addendum.index(item)] = item.replace("\\eqref{","\\eqref{KLSadd: ")
@@ -590,10 +592,14 @@ def main():
         print ref14_3
         # call the fixChapter method to get a list with the addendum paragraphs added in
         chapticker2 = 0
-        str9 = ''.join(fix_chapter(entire9, references9, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref9_3))
+        str9 = ''.join(fix_chapter(entire9, references9, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref9_3, sorter_check))
+        print sorter_check
+        print "DING"
 
         chapticker2 += 1
-        str14 = ''.join(fix_chapter(entire14, references14, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref14_3))
+        str14 = ''.join(fix_chapter(entire14, references14, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref14_3, sorter_check))
+
+        print "DING"
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # If you are writing something that will make a change to the chapter files, write it BEFORE this line, this part
