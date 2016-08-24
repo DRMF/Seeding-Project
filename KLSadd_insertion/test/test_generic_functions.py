@@ -11,7 +11,7 @@ class TestNewKeywords(TestCase):
 
     def test_new_keywords(self):
         self.assertEquals(new_keywords(['\\subsubsection*{ThisIsATest}\n', '\\subsubsection*{Special value}\n']
-                                       ,[]), ['ThisIsATest', 'Symmetry', 'Limit Relation', 'Special value'])
+                                       ,[]), (['ThisIsATest', 'Symmetry', 'Limit Relation', 'Special value'],[[0,0],[0,0],[0,0],[0,0], [0,0]]))
 
 
 class TestExtraneousSectionDeleter(TestCase):
