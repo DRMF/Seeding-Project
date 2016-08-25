@@ -87,6 +87,8 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
     :param chap: The destination of inserted sections.
     :param word: The keyword that is being processed.
     :param sortloc: The location in the list of words, of the word being sorted.
+    :param klsaddparas:
+    :param sortmatch_2:
     :return: This function outputs the processed chapter into a larger function for further processing.
     """
     hyper_headers_chap = []
