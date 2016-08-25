@@ -161,8 +161,8 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         chap9 = 1
     else:
         offset = sorter_check[sortloc][1]
-        if special_input == 1:
-            offset = 8
+        # if special_input == 1:
+        #     offset = 8
 
     if special_input in (2, 3):
         name_chap = 'hypergeometric representation'
@@ -201,6 +201,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         # print hyper_headers_chap
         # print word
         sortmatch_2.append(k_hyper_sub_chap)
+        print khyper_header_chap
     return chap
 
 def cut_words(word_to_find, word_to_search_in):
