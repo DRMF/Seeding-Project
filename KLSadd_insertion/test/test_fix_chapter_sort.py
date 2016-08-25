@@ -36,11 +36,12 @@ class TestFixChapterSort(TestCase):
                                             , '\\end{eqnarray}'])
         self.assertEquals(fix_chapter_sort(['%'
                                           , '\\subsection*{9.1 Wilson}'
+                                          , '\\subsection*{14.1 Askey}'
                                           , '\\paragraph{Orthogonality}'
                                           , 'The Wilson polynomial $W_n(y;a,b,c,d)$ is symmetric'
                                           , 'in $a,b,c,d$.'
                                           , '\\renewcommand{\\refname}{Standard references}']
-                                          , ['\\section{Wilson}\\index{Wilson polynomials}'
+                                          , ['\\section{Askey}\\index{Wilson polynomials}'
                                           , '\\subsection*{Hypergeometric representation}'
                                           , '\\begin{eqnarray}'
                                           , '& &\\frac{W_n(x^2;a,b,c,d)}{(a+b)_n(a+c)_n(a+d)_n}\\nonumber\\'
@@ -49,8 +50,8 @@ class TestFixChapterSort(TestCase):
                                           , '\\begin{eqnarray}'
                                           , '\\label{OrthIWilson}'
                                           , '& &\\frac{1}{2\\pi}\\int_0^{\\infty}'
-                                          , '\\end{eqnarray}'], 'Orthogonality', 0, [1, 2, 5], [], [0, 1, 5, 9],[[0, 0], [0, 0]])
-                                            , ['\\section{Wilson}\\index{Wilson polynomials}'
+                                          , '\\end{eqnarray}'], 'Orthogonality', 0, [1, 2, 3, 6], [], [0, 1, 5, 9],[[1, 0], [1, 0]])
+                                            , ['\\section{Askey}\\index{Wilson polynomials}'
                                             , '\\subsection*{Hypergeometric representation}'
                                             , '\\begin{eqnarray}'
                                             , '& &\\frac{W_n(x^2;a,b,c,d)}{(a+b)_n(a+c)_n(a+d)_n}\\nonumber\\'
@@ -87,12 +88,13 @@ class TestFixChapterSort(TestCase):
                                             , '& &\\frac{1}{2\\pi}\\int_0^{\\infty}'
                                             , '\\end{eqnarray}'])
         self.assertEquals(fix_chapter_sort(['%'
-                                            , '\\subsection*{9.1 Wilson}'
+                                            , '\\subsection*{9.1 Wilson)'
+                                            , '\\subsection*{9.2 Pseudo Jacobi (or Routh-Romanovski)}'
                                             , '\\paragraph{Symmetry}'
                                             , 'The Wilson polynomial $W_n(y;a,b,c,d)$ is symmetric'
                                             , 'in $a,b,c,d$.'
                                             , '\\renewcommand{\\refname}{Standard references}']
-                                            , ['\\section{Wilson}\\index{Wilson polynomials}'
+                                            , ['\\section{Pseudo Jacobi}\\index{Wilson polynomials}'
                                             , '\\subsection*{Hypergeometric representation}'
                                             , '\\begin{eqnarray}'
                                             , '& &\\frac{W_n(x^2;a,b,c,d)}{(a+b)_n(a+c)_n(a+d)_n}\\nonumber\\'
@@ -101,8 +103,8 @@ class TestFixChapterSort(TestCase):
                                             , '\\begin{eqnarray}'
                                             , '\\label{OrthIWilson}'
                                             , '& &\\frac{1}{2\\pi}\\int_0^{\\infty}'
-                                            , '\\end{eqnarray}'], 'Symmetry', 0, [1, 2, 5], [], [0, 1, 5, 9], [[0, 0], [0, 0]])
-                                            , ['\\section{Wilson}\\index{Wilson polynomials}'
+                                            , '\\end{eqnarray}'], 'Symmetry', 0, [1, 2, 3, 6], [], [0, 1, 5, 9], [[0, 0], [0, 0]])
+                                            , ['\\section{Pseudo Jacobi}\\index{Wilson polynomials}'
                                             , '\\subsection*{Hypergeometric representation}'
                                             , '\\begin{eqnarray}'
                                             , '& &\\frac{W_n(x^2;a,b,c,d)}{(a+b)_n(a+c)_n(a+d)_n}\\nonumber\\'
