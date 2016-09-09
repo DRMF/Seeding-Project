@@ -35,7 +35,7 @@ def chap1placer(chap1, kls, klsaddparas):
     intro_to_add = ''.join(kls_sub_chap1)
     chap1 = chap1[:len(chap1)-1]
     chap1 = ''.join(chap1)
-    total_chap1 = chap1 + "\\paragraph{\\large\\bf KLS Addendum: Generalities}" + intro_to_add + "\\end{document}"
+    total_chap1 = chap1 + "\\paragraph{\\bf KLS Addendum: Generalities}" + intro_to_add + "\\end{document}"
     return total_chap1
 
 
@@ -96,12 +96,15 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
 
     special_input = 0
     name_chap = word.lower()
+    print name_chap
     if name_chap == "orthogonality":
         special_input = 1
     elif name_chap == "special value":
         special_input = 2
     elif name_chap == "symmetry":
         special_input = 3
+    elif name_chap == "bilateral generating function":
+        special_input = 4
 
     khyper_header_chap = []
     k_hyper_sub_chap = []
@@ -115,7 +118,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
             temp = line[line.find(" ", 12)+1: line.find("}", 12)]  # get just the name (like mathpeople)
             if temp.lower() == 'wilson':
                 chapterstart = True
-        if special_input in (0, 2) and name_chap in line.lower() and chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line) or \
+        if special_input in (0, 2, 4) and name_chap in line.lower() and chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line) or \
         (special_input in (1, 3) and "orthogonality relation" not in line.lower() and name_chap in line.lower() and chapterstart
          and ("\\paragraph{" in line or "\\subsubsection*{" in line)):
             for item in klsaddparas:
@@ -135,9 +138,13 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
     item = 0
     while item < len(khyper_header_chap):
         try:
-            if khyper_header_chap[item] == khyper_header_chap[item+1]:
+            if khyper_header_chap[item] == khyper_header_chap[item + 1] and "generating functions" in name_chap:
+                k_hyper_sub_chap[item + 1] = k_hyper_sub_chap[item] + "\paragraph{\\bf KLS Addendum: Bilateral generating functions}" + k_hyper_sub_chap[item + 1]
+                khyper_header_chap[item] = "memes"
+                k_hyper_sub_chap[item] = "memes"
+            elif khyper_header_chap[item] == khyper_header_chap[item+1]:
                 k_hyper_sub_chap[item + 1] = k_hyper_sub_chap[item] + "\paragraph{\\bf KLS Addendum: " + \
-                    word + "}\n" + k_hyper_sub_chap[item + 1]
+                    word + "}" + k_hyper_sub_chap[item + 1]
                 khyper_header_chap[item] = "memes"
                 k_hyper_sub_chap[item] = "memes"
             else:
@@ -179,7 +186,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
                 temp = line[9:line.find("}", 7)]
 
         if name_chap in line.lower():
-            if special_input in (0, 2, 3) or special_input == 1 and "orthogonality relation" not in line:
+            if special_input in (0, 2, 3, 4) or special_input == 1 and "orthogonality relation" not in line:
                 hyper_subs_chap.append([tempref[d + 1]])  # appends the index for the line before following subsection
                 hyper_headers_chap.append(temp)  # appends the name of the section the hypergeo subsection is in
 
@@ -201,8 +208,13 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         # print hyper_headers_chap
         # print word
         sortmatch_2.append(k_hyper_sub_chap)
+    if "generating function" in name_chap:
+        print "Stuff for checking"
+        print k_hyper_sub_chap
         print khyper_header_chap
+        print hyper_headers_chap
     return chap
+
 
 def cut_words(word_to_find, word_to_search_in):
     """
@@ -219,10 +231,10 @@ def cut_words(word_to_find, word_to_search_in):
     b = word_to_search_in
     precheck = 1
     if a in b:
-        if "\\paragraph{\\large\\bf KLSadd: " in b or "\\subsubsection*{\\large\\bf KLSadd: " in b:
+        if "\\paragraph{\\bf KLS Addendum: " in b or "\\subsubsection*{\\bf KLS Addendum: " in b:
             while True:
-                if "\\paragraph{\\large\\bf KLSadd: " in b[b.find(a)-precheck:b.find(a)] or \
-                        "\\subsubsection*{\\large\\bf KLSadd: " in b[b.find(a) - precheck:b.find(a)]:
+                if "\\paragraph{\\bf KLS Addendum: " in b[b.find(a)-precheck:b.find(a)] or \
+                        "\\subsubsection*{\\bf KLS Addendum: " in b[b.find(a) - precheck:b.find(a)]:
                     return b[:b.find(a) - precheck] + b[b.find(a) + len(a):]
                 else:
                     precheck += 1
@@ -254,7 +266,7 @@ def prepare_for_pdf(chap):
 
 def get_commands(kls, new_commands):
     """
-    This method reads in relevant commands that are in KLSadd.tex and returns them as a list
+    This method reads in relevant commands that are in KLS Addendum.tex and returns them as a list
 
     :param kls: The addendum is the source of what is being found
     :return:
@@ -283,7 +295,7 @@ def insert_commands(kls, chap, cms):
     """
     # reads in the newCommands[] and puts them in chap
     begin_index = -1  # the index of the "begin document" keyphrase, this is where the new commands need to be inserted.
-    # find index of begin document in KLSadd
+    # find index of begin document in KLS Addendum
     index = 0
 
     for word in kls:
@@ -393,17 +405,17 @@ def reference_placer(chap, references, p, chapticker2):
         # Place before References paragraph
         word1 = str(p[count])
         if designator in word1[word1.find("\\subsection*{") + 1: word1.find("}")]:
-            chap[i - 2] += "%Begin KLSadd additions"
+            chap[i - 2] += "%Begin KLS Addendum additions"
             chap[i - 2] += p[count]
-            chap[i - 2] += "%End of KLSadd additions"
+            chap[i - 2] += "%End of KLS Addendum additions"
             count += 1
         else:
             while designator not in word1[word1.find("\\subsection*{") + 1: word1.find("}")]:
                 word1 = str(p[count])
                 if designator in word1[word1.find("\\subsection*{") + 1: word1.find("}")]:
-                    chap[i - 2] += "%Begin KLSadd additions"
+                    chap[i - 2] += "%Begin KLS Addendum additions"
                     chap[i - 2] += p[count]
-                    chap[i - 2] += "%End of KLSadd additions"
+                    chap[i - 2] += "%End of KLS Addendum additions"
                     count += 1
                 else:
                     count += 1
@@ -431,7 +443,6 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     for i in kls_list_all:
         fix_chapter_sort(kls, chap, i, sort_location, klsaddparas, sortmatch_2, tempref, sorter_check)
         sort_location += 1
-        print sorter_check
 
     for a in range(len(paragraphs_to_be_added)-1):
         for b in sortmatch_2:
@@ -445,6 +456,11 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
                      #print c
                 elif "%" == c[-1]:
                      c = c[:-2]
+                # if "Formula (9.8.15) was first obtained by Brafman" in c and "Formula (9.8.15) was first obtained by Brafman"in paragraphs_to_be_added[a]:
+                #     print c
+                #     print "DING"
+                #     print paragraphs_to_be_added[a]
+
                 paragraphs_to_be_added[a] = cut_words(c, paragraphs_to_be_added[a])
 
     reference_placer(chap, references, paragraphs_to_be_added, chapticker2)
@@ -478,6 +494,7 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
         if '\\myciteKLS' in chap[ticker1]:
             chap[ticker1] = chap[ticker1].replace('\\myciteKLS', '\\cite')
         ticker1 += 1
+    print chap
     return chap
 
 
@@ -509,16 +526,16 @@ def main():
         sorter_check = new_keywords(addendum, kls_list_full)[1]
 
         for item in addendum:
-            addendum[addendum.index(item)] = item.replace("\\eqref{","\\eqref{KLSadd: ")
+            addendum[addendum.index(item)] = item.replace("\\eqref{","\\eqref{KLS Addendum: ")
 
         for word in addendum:
             if "paragraph{" in word:
                 lenword = len(word) - 1
-                temp = word[0:word.find("{") + 1] + "\large\\bf KLSadd: " + word[word.find("{") + 1: lenword]
+                temp = word[0:word.find("{") + 1] + "\\bf KLS Addendum: " + word[word.find("{") + 1: lenword]
                 addendum[addendum.index(word)] = temp
             if "subsubsection*{" in word:
                 lenword = len(word) - 1
-                addendum[addendum.index(word)] = word[0:word.find("{") + 1] + "\large\\bf KLSadd: " + \
+                addendum[addendum.index(word)] = word[0:word.find("{") + 1] + "\\bf KLS Addendum: " + \
                 word[word.find("{") + 1: lenword]
         index = 0
         indexes = []
@@ -596,13 +613,9 @@ def main():
         # call the fixChapter method to get a list with the addendum paragraphs added in
         chapticker2 = 0
         str9 = ''.join(fix_chapter(entire9, references9, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref9_3, sorter_check))
-        print sorter_check
-        print "DING"
 
         chapticker2 += 1
         str14 = ''.join(fix_chapter(entire14, references14, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref14_3, sorter_check))
-
-        print "DING"
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # If you are writing something that will make a change to the chapter files, write it BEFORE this line, this part

@@ -158,5 +158,5 @@ class TestFixChapterSort(TestCase):
                                             , '\\subsection*{Hypergeometric representation}'
                                             , '\\begin{eqnarray}'
                                             , '& &\\frac{W_n(x^2;a,b,c,d)}{(a+b)_n(a+c)_n(a+d)_n}\\nonumber\\'
-                                            , '\\end{eqnarray}\\paragraph{\\bf KLS Addendum: Symmetry}The Wilson polynomial $W_n(y;a,b,c,d)$ is symmetric\\paragraph{\\bf KLS Addendum: Symmetry}Words'
+                                            , '\\end{eqnarray}\\paragraph{\\bf KLS Addendum: Symmetry}The Wilson polynomial $W_n(y;a,b,c,d)$ is symmetric\\paragraph{\\bf KLS Addendum: Symmetry}\nWords'
                                             , '%'])
