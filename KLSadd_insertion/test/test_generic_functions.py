@@ -26,7 +26,7 @@ class TestCutWords(TestCase):
     def test_cut_words(self):
         self.assertEquals(cut_words('MoreWords','WordsAndSomeMoreWords'), 'WordsAndSome')
         self.assertEquals(cut_words('SupposedToFail', 'WordsAndSomeMoreWords'), 'WordsAndSomeMoreWords')
-        self.assertEquals(cut_words('StuffFromAddenum', '''\\paragraph{\\large\\bf KLSadd: TestCase}StuffFromAddenum\\begin{equation}\\end{equation}'''),
+        self.assertEquals(cut_words('StuffFromAddenum', '''StuffFromAddenum\\begin{equation}\\end{equation}'''),
                                                         '''\\begin{equation}\\end{equation}''')
 
 
