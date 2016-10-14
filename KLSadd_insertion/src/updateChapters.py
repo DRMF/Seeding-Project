@@ -208,11 +208,6 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         # print hyper_headers_chap
         # print word
         sortmatch_2.append(k_hyper_sub_chap)
-    if "generating function" in name_chap:
-        print "Stuff for checking"
-        print k_hyper_sub_chap
-        print khyper_header_chap
-        print hyper_headers_chap
     return chap
 
 
@@ -278,7 +273,6 @@ def get_commands(kls, new_commands):
             new_commands.append(index - 1)
         if "mybibitem[1]" in word:
             new_commands.append(index)
-    print new_commands
     return kls[new_commands[0]:new_commands[1]]
 
 
@@ -466,17 +460,19 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     reference_placer(chap, references, paragraphs_to_be_added, chapticker2)
     chap = prepare_for_pdf(chap)
     cms = get_commands(kls,new_commands)
-    print cms
     chap = insert_commands(kls, chap, cms)
     commentticker = 0
 
     # These commands mess up PDF reading and mus tbe commented out
+    print"OUTPUT"
     for word in chap:
         word2 = chap[chap.index(word)-1]
+        print word2
         if "\\newcommand{\qhypK}[5]{\,\mbox{}_{#1}\phi_{#2}\!\left(" not in word2:
             if "\\newcommand\\half{\\frac12}" in word:
                 wordtoadd = "%" + word
                 chap[commentticker] = wordtoadd
+                print("TRIGGERED")
             elif "\\newcommand{\\hyp}[5]{\\,\\mbox{}_{#1}F_{#2}\\!\\left(" in word:
                 wordtoadd = "%" + word
                 chap[commentticker] = wordtoadd
@@ -487,14 +483,13 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
                 wordtoadd = "%" + word
                 chap[commentticker] = wordtoadd
         commentticker += 1
-
+    print"END OUTPUT"
     ticker1 = 0
     # Formatting to make the Latex file run
     while ticker1 < len(chap):
         if '\\myciteKLS' in chap[ticker1]:
             chap[ticker1] = chap[ticker1].replace('\\myciteKLS', '\\cite')
         ticker1 += 1
-    print chap
     return chap
 
 
