@@ -1,8 +1,8 @@
 ##KLS Addendum Insertion Project
 
-This project uses Python and string manipulation to insert sections of the KLSadd.tex file into the appropriate DRMF chapter sections. The updateChapters.py program is the most recently updated and cleanest version, however it is not completed. Should be run with a simple call to 
+This project uses python and string manipulation to insert sections of the KLSadd.tex file into the appropriate DRMF chapter sections. The updateChapters.py program is the most recently updated and cleanest version, however it is not completed. Should be run with a simple call to 
 ```
-Python updateChapters.py
+python updateChapters.py
 ```
 The program must have a tempchap9.tex and a tempchap14.tex as well as the KLSadd.tex file in the same directory!
 The linetest.py program is the original program file fully updated. It is much harder to read and should only be used as a reference to update the updateChapters.py program. 
@@ -25,17 +25,19 @@ First: the files
 
  - KLSadd.tex: This is the addendum we are working with. It has sections that correspond with sections in the chapter files, and it contains paragraphs that must be *inserted* into the chapter files. CAN BE FOUND ONINE IN PDF FORM: https://staff.fnwi.uva.nl/t.h.koornwinder/art/informal/KLSadd.pdf
 
- - chap09.tex and chap14.tex: these are chapter files. These are LATEX documents that are chapters in a book. This is a book written by smart math people. But they did some things wrong, so another math person wants to fix them. That math person wrote an addendum file called KLSadd.tex and our job is to pull paragraphs out of KLSadd and insert them at the end of the relevant section in the chapter files. Every chapter is made up of sections and every section has subsections
+ - chap09.tex and chap14.tex: these are chapter files. These are LaTeX documents that are chapters in a book. This is a book written by smart math people. But they did some things wrong, so another math person wants to fix them. That math person wrote an addendum file called KLSadd.tex and our job is to pull paragraphs out of KLSadd and insert them at the end of the relevant section in the chapter files. Every chapter is made up of sections and every section has subsections
 
- - updateChapters.py: this is our code. This document will be going over the variables and methods in this program. This program should: take paragraphs from every section in KLSadd and insert them into the relevant chapter file and into the relevant section within that chapter.
+ - updateChapters.py: This is thr code currently being worked on and sorting chapters. This document will be going over the variables and methods in this program. This program should: take paragraphs from every section in KLSadd and insert them into the relevant chapter file and into the relevant section within that chapter.
 
  - linetest.py: this abomination of code is the original program. It did the job, and it did it well. However, I realized that it was very very unreadable. This program is the child I never wanted. This program does 100% work and its outputs can be used to check against updateChapters.py's output.
 
- - newtempchap09.tex and newtempchap14.tex these are output files of linetest.py and this is what the output to updateChapters.py should be like!!!!!!!
+ - newtempchap09.tex and newtempchap14.tex these are output files of linetest.py and this is what a standard output looks like. They are no longer up to date for updateChapters as it sorts by subsection, but still serve as good reference
 
 Next: the specifications
 
-Toward the end of every section in the chapter file, there is a subsection called "References". It basically just contains a bunch of references to sources and other papers. Every paragraph in every subsection in KLSadd.tex must be put *before* the "References" subsection in the corresponding section in the chapter file. For example:
+Each section has subsections like "Hypergeometric Representation", sections in KLSadd with "Hypergeometric Representation" should be seorted there.
+
+Toward the end of every section in the chapter file, there is a subsection called "References". It basically just contains a bunch of references to sources and other papers. This is where unsorted materials go For example:
 **These aren't real sections, obviously, just an example**
 
 in chap09.tex:
@@ -56,27 +58,12 @@ The Wilson polynomial $W_n(y;a,b,c,d)$ is symmetric
 in $a,b,c,d$.
 ```
 
-So in the chapter 9 file, section 15 "Dogs", before the References subsection, we need to add in the Beagles paragraph. HOWEVER, there are some changes that need to be made before we insert. The easiest change is adding a comment that tells us something was inserted. We just append something like "%RS insertion begin" and "%RS insertion complete" before and after, respectively, the Beagles paragraph when we insert. Another change is adding \large\bf before the paragraph name. This changes the size and format so it looks prettier. So the heading in this example would be:
+So in the chapter 9 file, section 15 "Dogs", We change the formatting with "\bf KLS Addendum: ". This changes the format so it looks prettier and stands out. So the heading in this example would be:
 
 ```latex
-\paragraph{\large\bf Beagles}
+\paragraph{\bf KLS Addendum: Beagles}
 ```
 ---
-
-So after updateChapters.py is called, the chapter 9 file should look like this:
-
-```latex
-\section{Dogs}\index{Dog polynomials}
-\subsection*{Hypergeometric dogs}
-blah blah blah
-%RS insertion begin
-\paragraph{\large\bf Beagles}
-The Wilson polynomial $W_n(y;a,b,c,d)$ is symmetric
-in $a,b,c,d$.
-%RS insertion complete
-\subsection*{References}
-\cite{Dogs101}
-```
 
 The variables:
 
@@ -88,13 +75,13 @@ These are the variables in the beginning
 
 -mathPeople: this holds the *name* of every section in KLSadd. It stores names like Wilson, Racah, Dual Hahn, etc. In our example with the Dogs above, it would hold "Dogs". This is useful to finding where to insert the correct paragraph
 
--newCommands: this is a list that holds ints representing line numbers in KLSadd.tex that correspond to commands. There are a few special commands in the file that help turn LATEX files into PDF files and they need to be copied over into both chapter files
+-newCommands: this is a list that holds ints representing line numbers in KLSadd.tex that correspond to commands. There are a few special commands in the file that help turn LaTeX files into PDF files and they need to be copied over into both chapter files
 
 -comms: holds the actual strings of the commands found from the line numbers stored in newCommands
 
 ---
 
-The methods:
+The functions:
 
 -prepareForPDF(chap): this method inserts some packages needed by LATEX files to be turned into pdf files. It takes a list called chap which is a String containing the contents of the chapter fie. It returns the chap String edited with the special packages in place.
 
