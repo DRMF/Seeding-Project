@@ -1,10 +1,7 @@
 """
-TODO: Rewrite the whole thing so another human being can read it
-jeez this is like my handwriting; it's nonsense to everyone but me
-This started out as a test file but I just kept writing it 
-and writing it
-and writing it
-and now its the project
+Written by Rahul Shah
+Outdated project in terms of function, now that updateChapters does what it does and more
+        Kept for reference
 """
 
 entireFile = ""
