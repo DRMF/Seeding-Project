@@ -11,9 +11,8 @@ headings = []
 sections = []
 mathPeople = []
 newCommands = []
-#can you tell I like lists?
 name = ""
-temp = "" 
+temp = ""
 with open("KLSadd.tex", "r") as file:
         entireFile = file.readlines()
         for word in entireFile:
