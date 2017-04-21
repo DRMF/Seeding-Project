@@ -12,8 +12,41 @@ DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../data/"
 # w, h = 2, 100
 # sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
+def bracket_finder(word_to_search):
+    """
 
-def chap_1_placer(chap1, kls, klsaddparas):
+    :param word_to_search:
+    :return: The word between the first set of brackets
+    """
+    first_bracket = True;
+    first_bracket_location = 0;
+    last_bracket_location = 0;
+    layers = 0;
+    counter = 0;
+    first_char = 0;
+    for character_examined in word_to_search:
+        if character_examined == "{" and first_bracket == True:
+            first_bracket_location = word_to_search.index(character_examined)
+            first_bracket = False;
+        elif character_examined == "{" and first_bracket != True:
+            layers += 1;
+        elif character_examined == "}":
+            if layers == 0:
+                last_bracket_location = counter
+                #word_to_search.index(character_examined)
+            else:
+                layers -= 1
+        counter += 1
+    word_to_search2 = word_to_search[first_bracket_location + 1:last_bracket_location]
+    for character_examined in word_to_search2:
+        if character_examined.isalpha():
+            first_char = word_to_search2.index(character_examined)
+            return word_to_search2[first_char:]
+    return word_to_search[first_bracket_location+1:last_bracket_location]
+
+
+
+def chap_1_placer(chap1, kls, klsaddparas, cp1commands):
     """
 
     :param chap1: Chapter 1 text file
@@ -21,6 +54,8 @@ def chap_1_placer(chap1, kls, klsaddparas):
     :param klsaddparas: Paragraphs that the code has identified to be sorted
     :return: Returns chapter 1 with the sections inserted into the right place from the introduction of KLSadd
     """
+
+
     chapter_start = True
     index = 0
     kls_sub_chap1 = []
@@ -29,7 +64,8 @@ def chap_1_placer(chap1, kls, klsaddparas):
         index += 1
         line = str(item)
         if "\\subsection" in line:
-            temp = line[line.find(" ", 12) + 1: line.find("}", 12)+1]  # get just the name (like mathpeople)
+            temp = bracket_finder(line)
+            # temp = line[line.find(" ", 12) + 1: line.find("}", 12)+1]  # get just the name (like mathpeople) (edit this) and line 128
             # The 12 is not arbitrary and comes from the number of characters in "//subsection{"
         if chapter_start and ("\\paragraph{" in line or "\\subsubsection*{" in line):
             for item in klsaddparas:
@@ -39,11 +75,57 @@ def chap_1_placer(chap1, kls, klsaddparas):
             t = ''.join(kls[index-1: klsaddparas[klsloc]])
             kls_sub_chap1.append(t)  # append the whole paragraph, every paragraph should end with a % comment
             kls_header_chap1.append(temp)  # append the name of subsection
+
             break
     intro_to_add = ''.join(kls_sub_chap1)
     chap1 = chap1[:len(chap1)-1]
+    commentticker = 0
+
+    # These commands mess up PDF reading and mus tbe commented out
+    for line in cp1commands:
+        prev_line = cp1commands[cp1commands.index(line) - 1]
+        if "\\newcommand{\qhypK}[5]{\,\mbox{}_{#1}\phi_{#2}\!\left(" not in prev_line:
+            if "\\newcommand\\half{\\frac12}" in line:
+                linetoadd = "%" + line
+                cp1commands[commentticker] = linetoadd
+
+            elif "\\newcommand{\\hyp}[5]{\\,\\mbox{}_{#1}F_{#2}\\!\\left(" in line:
+                linetoadd = "%" + line
+                cp1commands[commentticker] = linetoadd
+
+            elif "\\genfrac{}{}{0pt}{}{#3}{#4};#5\\right)}" in line:
+                linetoadd = "%" + line
+                cp1commands[commentticker] = linetoadd
+
+            elif "\\newcommand{\\qhyp}[5]{\\,\\mbox{}_{#1}\\phi_{#2}\\!\\left(" in line:
+                linetoadd = "%" + line
+                cp1commands[commentticker] = linetoadd
+
+        commentticker += 1
+        if "\\newpage" in line and "\hbox{}" not in line:
+            chap1[chap1.index(line)] = ""
+        if '\myciteKLS' in line:
+            linetoadd = line.replace('\myciteKLS', '\cite')
+            cp1commands[commentticker] = linetoadd
+
+    cp1commandsstring = ''.join(cp1commands)
+    index = 0
+    for word in chap1:
+        index += 1
+        if "\\newcommand" in chap1[index]:
+            chap1[index - 1] = cp1commandsstring
+            print"ding"
+            break
+    ticker1 = 0
+    # Formatting to make the Latex file run
+    while ticker1 < len(chap1):
+        if '\\myciteKLS' in chap1[ticker1]:
+            chap1[ticker1] = chap1[ticker1].replace('\\myciteKLS', '\\cite')
+        ticker1 += 1
+
     chap1 = ''.join(chap1)
     total_chap1 = chap1 + "\\paragraph{\\bf KLS Addendum: Generalities}" + intro_to_add + "\\end{document}"
+
     return total_chap1
 
 
@@ -125,13 +207,15 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         index += 1
         line = str(item)
         if "\\subsection" in line:
-            temp = line[line.find(" ", 12)+1: line.find("}", 12)]  # get just the name (like mathpeople)
+            temp = bracket_finder(line)
+            #line[line.find(" ", 12)+1: line.find("}", 12)]
+            # get just the name (like mathpeople)
             if temp.lower() == 'wilson':
                 chapterstart = True
         if special_input in (0, 2, 4) and name_chap in line.lower() and chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line) or \
         (special_input in (1, 3) and "orthogonality relation" not in line.lower() and name_chap in line.lower() and chapterstart
          and ("\\paragraph{" in line or "\\subsubsection*{" in line)):
-            testing = item
+            testing = item #CLEAN UP(?)
             for item in klsaddparas:
                 if index < item:
                     klsloc = klsaddparas.index(item)
@@ -194,9 +278,9 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         line = str(chap[item])
         if "\\section{" in line or "\\subsection{" in line:
             if "\\subsection{" in line:
-                temp = line[12:line.find("}", 7)]
+                temp = bracket_finder(line)
             else:
-                temp = line[9:line.find("}", 7)]
+                temp = bracket_finder(line)
 
         if name_chap in line.lower():
             if special_input in (0, 2, 3, 4) or "orthogonality relation" not in line:
@@ -220,13 +304,15 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
                         if chap9 == 1:
                             sorter_check[sortloc][1] += 1
                         k_hyp_index_iii += 1
+                        with open(DATA_DIR + "shiftedsections.tex", "a") as shifted:
+                            shifted.write("KLS Addendum: " + word + " to " + temp + "\n")
                     except IndexError:
+                        print chap[tempref[d+1] - 1]
+                        print
                         print("Warning! Code has found an error involving section finding for '" + name_chap + "'.")
     '''
     '''
-    if sortloc == 7:
-        with open(DATA_DIR + "testoutput.tex", "w") as thing:
-            thing.write(''.join(chap))
+
     if len(hyper_headers_chap) != 0:
         sortmatch_2.append(k_hyper_sub_chap)
     return chap
@@ -243,23 +329,23 @@ def cut_words(word_to_find, word_to_search_in):
     :param word_to_search_in: The big word that is being searched
     :return: The big word without the word that was searched for
     """
-    find_this_string = word_to_find
-    search_in_this_string = word_to_search_in
+    find_string = word_to_find
+    search_string = word_to_search_in
     precheck = 1
-    if find_this_string in search_in_this_string:
-        if "\\paragraph{\\bf KLS Addendum: " in search_in_this_string or "\\subsubsection*{\\bf KLS Addendum: " in search_in_this_string:
+    if find_string in search_string:
+        if "\\paragraph{\\bf KLS Addendum: " in search_string or "\\subsubsection*{\\bf KLS Addendum: " in search_string:
             while True:
-                if "\\paragraph{\\bf KLS Addendum: " in search_in_this_string[search_in_this_string.find(find_this_string)-precheck:search_in_this_string.find(find_this_string)] or \
-                   "\\subsubsection*{\\bf KLS Addendum: " in search_in_this_string[search_in_this_string.find(find_this_string) - precheck:search_in_this_string.find(find_this_string)]:
-                    return search_in_this_string[:search_in_this_string.find(find_this_string) - precheck] + search_in_this_string[search_in_this_string.find(find_this_string) + len(find_this_string):]
+                if "\\paragraph{\\bf KLS Addendum: " in search_string[search_string.find(find_string)-precheck:search_string.find(find_string)] or \
+                   "\\subsubsection*{\\bf KLS Addendum: " in search_string[search_string.find(find_string) - precheck:search_string.find(find_string)]:
+                    return search_string[:search_string.find(find_string) - precheck] + search_string[search_string.find(find_string) + len(find_string):]
                 else:
                     precheck += 1
 
         else:
-            cut = search_in_this_string[:search_in_this_string.find(find_this_string)] + search_in_this_string[search_in_this_string.find(find_this_string) + len(find_this_string):]
+            cut = search_string[:search_string.find(find_string)] + search_string[search_string.find(find_string) + len(find_string):]
             return cut
     else:
-        return search_in_this_string
+        return search_string
 
 
 def prepare_for_pdf(chap):
@@ -269,20 +355,13 @@ def prepare_for_pdf(chap):
     :param chap: The chapter (9 or 14) that is being processed as a list of lines in each LaTeX chapter
     :return: The processed chapter, ready for additional processing
     """
+
     # (list) -> list
     foot_misc_index = 0
     for i, line in enumerate(chap):
         if "footmisc" in line:
             foot_misc_index += i + 1
 
-    '''
-    index = 0
-    for line in chap:
-        index += 1
-        if "footmisc" in line:
-            foot_misc_index += index
-    '''
-    # str[footmiscIndex] += "\\usepackage[pdftex]{hyperref} \n\\usepackage {xparse} \n\\usepackage{cite} \n"
     chap.insert(foot_misc_index, "\\usepackage[pdftex]{hyperref} \n\\usepackage {xparse} \n\\usepackage{cite} \n")
     return chap
 
@@ -305,15 +384,15 @@ def get_commands(kls, new_commands):
 
 
 
-def insert_commands(kls, chap, cms):
+def insert_commands(kls, chap, commands):
     """
     Inserts commands identified in previous functions.
-    This method addresses the goal of hardcoding in the necessary commands to let the chapter files run as pdf's.
+    This method addresses the goal of hardcoding in the necessary comma vnds to let the chapter files run as pdf's.
     Currently only works with chapter 9
 
     :param kls: Addendum to look through
     :param chap: The chapter that is receiving commands (9 or 14) as a list of lines in each LaTeX chapter
-    :param cms: Commands to be inserted
+    :param commands: Commands to be inserted
     :return: chap, processed
     """
     # reads in the newCommands[] and puts them in chap
@@ -327,7 +406,7 @@ def insert_commands(kls, chap, cms):
             begin_index += index
     temp_index = 0
 
-    for i in cms:
+    for i in commands:
         chap.insert(begin_index + temp_index, i)
         temp_index += 1
     return chap
@@ -423,8 +502,11 @@ def reference_placer(chap, references, p, chapticker2):
         word1 = str(p[count])
         if designator in word1[word1.find("\\subsection*{") + 1: word1.find("}")]:
             chap[i - 2] += "%Begin KLS Addendum additions"
+            if "In addition to the Chebyshev poly" in p[count]:
+                chap[i - 2] += "\paragraph{\\bf KLS Addendum Addition}"
             chap[i - 2] += p[count]
             chap[i - 2] += "%End of KLS Addendum additions"
+
             count += 1
         else:
             while designator not in word1[word1.find("\\subsection*{") + 1: word1.find("}")]:
@@ -436,6 +518,7 @@ def reference_placer(chap, references, p, chapticker2):
                     count += 1
                 else:
                     count += 1
+
     return chap
 
 
@@ -457,7 +540,7 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     """
 
     sort_location = 0
-
+    print chapticker2
     for name in kls_list_all:
         fix_chapter_sort(kls, chap, name, sort_location, klsaddparas, sortmatch_2, tempref, sorter_check)
         sort_location += 1
@@ -466,9 +549,6 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     for paragraph in range(len(paragraphs_to_be_added)):
         for subsection in sortmatch_2:
             for lines_in_subsection in subsection:
-                with open(DATA_DIR + "compare.tex", "a") as spook:
-                    spook.write(paragraphs_to_be_added[paragraph])
-                    spook.write("NEXT: ")
                 if "%" == lines_in_subsection[-2]:
                      lines_in_subsection = lines_in_subsection[:-3]
                      #print "memes"
@@ -486,26 +566,29 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
 
     chap = prepare_for_pdf(chap)
     cms = get_commands(kls,new_commands)
+    print cms
     chap = insert_commands(kls, chap, cms)
     commentticker = 0
 
     # These commands mess up PDF reading and mus tbe commented out
-    for word in chap:
-        word2 = chap[chap.index(word)-1]
-        if "\\newcommand{\qhypK}[5]{\,\mbox{}_{#1}\phi_{#2}\!\left(" not in word2:
-            if "\\newcommand\\half{\\frac12}" in word:
-                wordtoadd = "%" + word
-                chap[commentticker] = wordtoadd
-            elif "\\newcommand{\\hyp}[5]{\\,\\mbox{}_{#1}F_{#2}\\!\\left(" in word:
-                wordtoadd = "%" + word
-                chap[commentticker] = wordtoadd
-            elif "\\genfrac{}{}{0pt}{}{#3}{#4};#5\\right)}" in word:
-                wordtoadd = "%" + word
-                chap[commentticker] = wordtoadd
-            elif "\\newcommand{\\qhyp}[5]{\\,\\mbox{}_{#1}\\phi_{#2}\\!\\left(" in word:
-                wordtoadd = "%" + word
-                chap[commentticker] = wordtoadd
+    for line in chap:
+        prev_line = chap[chap.index(line)-1]
+        if "\\newcommand{\qhypK}[5]{\,\mbox{}_{#1}\phi_{#2}\!\left(" not in prev_line:
+            if "\\newcommand\\half{\\frac12}" in line:
+                linetoadd = "%" + line
+                chap[commentticker] = linetoadd
+            elif "\\newcommand{\\hyp}[5]{\\,\\mbox{}_{#1}F_{#2}\\!\\left(" in line:
+                linetoadd = "%" + line
+                chap[commentticker] = linetoadd
+            elif "\\genfrac{}{}{0pt}{}{#3}{#4};#5\\right)}" in line:
+                linetoadd = "%" + line
+                chap[commentticker] = linetoadd
+            elif "\\newcommand{\\qhyp}[5]{\\,\\mbox{}_{#1}\\phi_{#2}\\!\\left(" in line:
+                linetoadd = "%" + line
+                chap[commentticker] = linetoadd
         commentticker += 1
+        if "\\newpage" in line and "\hbox{}" not in line:
+            chap[chap.index(line)] = ""
     ticker1 = 0
     # Formatting to make the Latex file run
     while ticker1 < len(chap):
@@ -515,7 +598,7 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     return chap
 
 
-def main():
+def main(klsfile, klswrite9, klswrite14, klswrite1, klsread9, klsread14, klsread1):
     """
     Runs all of the other functions and outputs their results into an output file as well as putting together the list
     of additions that is fed into fix_chapter.
@@ -534,7 +617,7 @@ def main():
     sortmatch_2 = []
 
     # open the KLSadd file to do things with
-    with open(DATA_DIR + "KLSaddII.tex", "r") as add:
+    with open(DATA_DIR + klsfile, "r") as add:
         # store the file as a string
         addendum = add.readlines()
         kls_list_all = new_keywords(addendum, kls_list_full)[0]
@@ -584,7 +667,7 @@ def main():
             if "\\renewcommand{\\refname}{Standard references}" in word:
                 klsaddparas.append(index-1)
                 indexes.append(index - 1)
-        print(klsaddparas)
+
         # now indexes holds all of the places there is a section
         # using these indexes, get all of the words in between and add that to the paras[]
         paras = []
@@ -601,20 +684,21 @@ def main():
 
         # parse both files 9 and 14 as strings
 
-        with open(DATA_DIR + "chap01.tex", "r") as ch1:
+        with open(DATA_DIR + klsread1, "r") as ch1:
             entire1 = ch1.readlines()  # reads in as a list of strings
 
-        with open(DATA_DIR + "updated1.tex", "w") as temp1:
-            temp1.write(chap_1_placer(entire1, addendum, klsaddparas))
+        cp1commands = get_commands(addendum, new_commands)
+        print cp1commands
+        with open(DATA_DIR + klswrite1, "w") as temp1:
+            temp1.write(chap_1_placer(entire1, addendum, klsaddparas, cp1commands))
+
+
         # chapter 9
-        with open(DATA_DIR + "chap09.tex", "r") as ch9:
+        with open(DATA_DIR + klsread9, "r") as ch9:
             entire9 = ch9.readlines()  # reads in as a list of strings
 
-        with open(DATA_DIR + "testoutput.tex", "w") as thing:
-            thing.write(''.join(entire9))
-
         # chapter 14
-        with open(DATA_DIR + "chap14.tex", "r") as ch14:
+        with open(DATA_DIR + klsread14, "r") as ch14:
             entire14 = ch14.readlines()
 
         # call the findReferences method to find the index of the References paragraph in the two file strings
@@ -639,6 +723,8 @@ def main():
         chapticker2 = 14
         str14 = ''.join(fix_chapter(entire14, references14, paras, addendum, kls_list_all, chapticker2, new_commands, klsaddparas, sortmatch_2, ref14_3, sorter_check))
 
+
+
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # If you are writing something that will make a change to the chapter files, write it BEFORE this line, this part
     # is where the lists representing the words/strings in the chapter are joined together and updated as a string!
@@ -646,11 +732,12 @@ def main():
 
     # write to files
     # new output files for safety
-    with open(DATA_DIR + "updated9.tex", "w") as temp9:
+    with open(DATA_DIR + klswrite9, "w") as temp9:
         temp9.write(str9)
 
-    with open(DATA_DIR + "updated14.tex", "w") as temp14:
+    with open(DATA_DIR + klswrite14, "w") as temp14:
         temp14.write(str14)
+    print(bracket_finder("words{19.4 morewords{}}ess"))
 
 if __name__ == '__main__':
-    main()
+    main("KLSaddII.tex", "updated9.tex", "updated14.tex", "updated1.tex", "chap09.tex", "chap14.tex", "chap01.tex")
