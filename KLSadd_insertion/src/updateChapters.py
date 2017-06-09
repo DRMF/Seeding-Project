@@ -12,18 +12,18 @@ DATA_DIR = os.path.dirname(os.path.realpath(__file__)) + "/../data/"
 # w, h = 2, 100
 # sorter_check = [[0 for _ in range(w)] for __ in range(h)]
 
+
 def bracket_finder(word_to_search):
     """
-
     :param word_to_search:
-    :return: The word between the first set of brackets
+    :return: The string between the first set of brackets
     """
+    # This function is mainly for convenience and layered brackets
     first_bracket = True;
     first_bracket_location = 0;
     last_bracket_location = 0;
     layers = 0;
     counter = 0;
-    first_char = 0;
     for character_examined in word_to_search:
         if character_examined == "{" and first_bracket == True:
             first_bracket_location = word_to_search.index(character_examined)
@@ -33,26 +33,26 @@ def bracket_finder(word_to_search):
         elif character_examined == "}":
             if layers == 0:
                 last_bracket_location = counter
-                #word_to_search.index(character_examined)
             else:
                 layers -= 1
         counter += 1
+        # Goes through every character while recording layer to not extract the wrong string
     word_to_search2 = word_to_search[first_bracket_location + 1:last_bracket_location]
     for character_examined in word_to_search2:
         if character_examined.isalpha():
             first_char = word_to_search2.index(character_examined)
             return word_to_search2[first_char:]
+        # This loop is for chapter sections that may start with numbers or other symbols, it makes the output start on the section name
     return word_to_search[first_bracket_location+1:last_bracket_location]
-
 
 
 def chap_1_placer(chap1, kls, klsaddparas, cp1commands):
     """
-
     :param chap1: Chapter 1 text file
     :param kls: KLSadd, the addendum
     :param klsaddparas: Paragraphs that the code has identified to be sorted
-    :return: Returns chapter 1 with the sections inserted into the right place from the introduction of KLSadd
+    :return: Returns chapter 1 with the sections inserted into the right places from the introduction of KLSadd
+             It's bascially a modified version of fix_chapter_sort
     """
 
 
@@ -65,8 +65,6 @@ def chap_1_placer(chap1, kls, klsaddparas, cp1commands):
         line = str(item)
         if "\\subsection" in line:
             temp = bracket_finder(line)
-            # temp = line[line.find(" ", 12) + 1: line.find("}", 12)+1]  # get just the name (like mathpeople) (edit this) and line 128
-            # The 12 is not arbitrary and comes from the number of characters in "//subsection{"
         if chapter_start and ("\\paragraph{" in line or "\\subsubsection*{" in line):
             for item in klsaddparas:
                 if index < item:
@@ -114,7 +112,6 @@ def chap_1_placer(chap1, kls, klsaddparas, cp1commands):
         index += 1
         if "\\newcommand" in chap1[index]:
             chap1[index - 1] = cp1commandsstring
-            print"ding"
             break
     ticker1 = 0
     # Formatting to make the Latex file run
@@ -136,9 +133,9 @@ def extraneous_section_deleter(entered_list):
     :param entered_list: List of paragraphs
     :return: Extraneous name free output
     """
+    # Returns the sections with unique names (per section) (as the following are often duplicated)
     return [item for item in entered_list if "reference" not in item.lower() and "limit relation" not in item.lower()
-            and "symmetry" not in item.lower() and " hypergeometric representation" not in item.lower()
-            and "hypergeometric representation " not in item.lower()]
+            and "symmetry" not in item.lower() and " hypergeometric representation" not in item.lower()]
 
 
 def new_keywords(kls, kls_list):
@@ -161,6 +158,7 @@ def new_keywords(kls, kls_list):
     for item in kls_list:
         if item not in kls_list_chap:
             kls_list_chap.append(item)
+    #Preserves original kls_list, while allowing editting (special value is classed under symmetry)
     kls_list_chap[kls_list_chap.index("Special value")] = "Symmetry"
     kls_list_chap.append("Special value")
     w = 2
@@ -197,6 +195,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         special_input = 3
     elif name_chap == "bilateral generating function":
         special_input = 4
+    #These sections either share names with others or are categorized under others, so they must be processed specially
 
     khyper_header_chap = []
     k_hyper_sub_chap = []
@@ -208,14 +207,11 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
         line = str(item)
         if "\\subsection" in line:
             temp = bracket_finder(line)
-            #line[line.find(" ", 12)+1: line.find("}", 12)]
-            # get just the name (like mathpeople)
             if temp.lower() == 'wilson':
                 chapterstart = True
         if special_input in (0, 2, 4) and name_chap in line.lower() and chapterstart and ("\\paragraph{" in line or "\\subsubsection*{" in line) or \
         (special_input in (1, 3) and "orthogonality relation" not in line.lower() and name_chap in line.lower() and chapterstart
          and ("\\paragraph{" in line or "\\subsubsection*{" in line)):
-            testing = item #CLEAN UP(?)
             for item in klsaddparas:
                 if index < item:
                     klsloc = klsaddparas.index(item)
@@ -237,6 +233,7 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
                 k_hyper_sub_chap[item + 1] = k_hyper_sub_chap[item] + "\paragraph{\\bf KLS Addendum: Bilateral generating functions}" + k_hyper_sub_chap[item + 1]
                 khyper_header_chap[item] = "/x00"
                 k_hyper_sub_chap[item] = "/x00"
+                #/x00 is a filler character that must be unique, it can be changed, as long as the replacement isn't ever going to be an actual section
             elif khyper_header_chap[item] == khyper_header_chap[item+1]:
                 k_hyper_sub_chap[item + 1] = k_hyper_sub_chap[item] + "\paragraph{\\bf KLS Addendum: " + \
                     word + "}" + k_hyper_sub_chap[item + 1]
@@ -284,8 +281,6 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
 
         if name_chap in line.lower():
             if special_input in (0, 2, 3, 4) or "orthogonality relation" not in line:
-
-
                 hyper_subs_chap.append([tempref[d + 1]])  # appends the index for the line before following subsection
                 hyper_headers_chap.append(temp)  # appends the name of the section the hypergeo subsection is in
                 '''
@@ -310,8 +305,6 @@ def fix_chapter_sort(kls, chap, word, sortloc, klsaddparas, sortmatch_2, tempref
                         print chap[tempref[d+1] - 1]
                         print
                         print("Warning! Code has found an error involving section finding for '" + name_chap + "'.")
-    '''
-    '''
 
     if len(hyper_headers_chap) != 0:
         sortmatch_2.append(k_hyper_sub_chap)
@@ -322,8 +315,6 @@ def cut_words(word_to_find, word_to_search_in):
     """
     This function checks through the outputs of later sections and removes duplicates, so that the output file does
     not have duplicates.
-
-    IN DEVELOPMENT
 
     :param word_to_find: Word that is being found
     :param word_to_search_in: The big word that is being searched
@@ -363,6 +354,7 @@ def prepare_for_pdf(chap):
             foot_misc_index += i + 1
 
     chap.insert(foot_misc_index, "\\usepackage[pdftex]{hyperref} \n\\usepackage {xparse} \n\\usepackage{cite} \n")
+    #This is so things generate correctly
     return chap
 
 
@@ -381,6 +373,7 @@ def get_commands(kls, new_commands):
         if "mybibitem[1]" in word:
             new_commands.append(index)
     return kls[new_commands[0]:new_commands[1]]
+    #Addendum needs these to generate correctly
 
 
 
@@ -410,6 +403,7 @@ def insert_commands(kls, chap, commands):
         chap.insert(begin_index + temp_index, i)
         temp_index += 1
     return chap
+    #Puts the commands in the chapter so they do something
 
 
 def find_references(chapter, chapticker, math_people):
@@ -464,6 +458,7 @@ def find_references(chapter, chapticker, math_people):
             elif chapticker == 14:
                 ref14_3.append(index)
             add_next_section = False
+            #The if statement differentiates chapters 9 and 14
         if "subsection*{" in word and "References" not in word:
             if chapticker == 9:
                 ref9_3.append(index)
@@ -540,11 +535,10 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
     """
 
     sort_location = 0
-    print chapticker2
+
     for name in kls_list_all:
         fix_chapter_sort(kls, chap, name, sort_location, klsaddparas, sortmatch_2, tempref, sorter_check)
         sort_location += 1
-
 
     for paragraph in range(len(paragraphs_to_be_added)):
         for subsection in sortmatch_2:
@@ -563,11 +557,13 @@ def fix_chapter(chap, references, paragraphs_to_be_added, kls, kls_list_all, cha
                 paragraphs_to_be_added[paragraph] = cut_words(lines_in_subsection, paragraphs_to_be_added[paragraph])
 
     reference_placer(chap, references, paragraphs_to_be_added, chapticker2)
-
+    # Reference_placer is the one that does all the work
+    # If anything needs to be done before commands are put in, do it here
     chap = prepare_for_pdf(chap)
     cms = get_commands(kls,new_commands)
-    print cms
     chap = insert_commands(kls, chap, cms)
+    # The above 3 lines insert comments into the new revised chapter
+    # The final output (addendum + chapter) is made here
     commentticker = 0
 
     # These commands mess up PDF reading and mus tbe commented out
@@ -668,6 +664,7 @@ def main(klsfile, klswrite9, klswrite14, klswrite1, klsread9, klsread14, klsread
                 klsaddparas.append(index-1)
                 indexes.append(index - 1)
 
+        # Looks for sections to sort
         # now indexes holds all of the places there is a section
         # using these indexes, get all of the words in between and add that to the paras[]
         paras = []
@@ -688,7 +685,6 @@ def main(klsfile, klswrite9, klswrite14, klswrite1, klsread9, klsread14, klsread
             entire1 = ch1.readlines()  # reads in as a list of strings
 
         cp1commands = get_commands(addendum, new_commands)
-        print cp1commands
         with open(DATA_DIR + klswrite1, "w") as temp1:
             temp1.write(chap_1_placer(entire1, addendum, klsaddparas, cp1commands))
 
@@ -737,7 +733,9 @@ def main(klsfile, klswrite9, klswrite14, klswrite1, klsread9, klsread14, klsread
 
     with open(DATA_DIR + klswrite14, "w") as temp14:
         temp14.write(str14)
-    print(bracket_finder("words{19.4 morewords{}}ess"))
+
+    print "Files sorted"
+    # Will print when code done
 
 if __name__ == '__main__':
     main("KLSaddII.tex", "updated9.tex", "updated14.tex", "updated1.tex", "chap09.tex", "chap14.tex", "chap01.tex")
